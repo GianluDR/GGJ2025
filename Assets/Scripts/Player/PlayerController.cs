@@ -1,25 +1,33 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour, IPausable
 {
-    private bool isMoving = true;
+    
+
+    [Header("Player Gameplay Attribute")]
+    [SerializeField]private bool inPause = false; //NON SERIALIZE
+    [SerializeField]private float speed = 5f; //NON SERIALIZE
+    [SerializeField]private Vector2 movementInput; //NON SERIALIZE
 
     private void Update()
     {
-        if (isMoving)
+        
+    }
+
+    private void FixedUpdate()
+    {
+        if (!inPause)
         {
-            // Example movement logic
-            float horizontal = Input.GetAxis("Horizontal");
-            float vertical = Input.GetAxis("Vertical");
-            Vector3 moveDirection = new Vector3(horizontal, 0, vertical).normalized;
-            transform.Translate(moveDirection * Time.deltaTime * 5f);
+            Vector3 move = new Vector3(movementInput.x, movementInput.y, 0);
+            transform.Translate(move * speed * Time.deltaTime);
         }
     }
 
     // Pause player-related actions
     public void Pause()
     {
-        isMoving = false;
+        inPause = true;
         // Example: Pause animations, if applicable
         // animator.speed = 0f;
     }
@@ -27,7 +35,7 @@ public class PlayerController : MonoBehaviour, IPausable
     // Resume player-related actions
     public void Unpause()
     {
-        isMoving = true;
+        inPause = false;
         // Example: Resume animations
         // animator.speed = 1f;
     }
@@ -40,5 +48,19 @@ public class PlayerController : MonoBehaviour, IPausable
     private void OnDisable()
     {
         PauseManager.UnregisterPausable(this);
+    }
+
+    // Called by Unity Event
+    public void OnMove(InputAction.CallbackContext context)
+    {
+        // read only if started or in process
+        if (context.phase == InputActionPhase.Performed || context.phase == InputActionPhase.Started)
+        {
+           movementInput = context.ReadValue<Vector2>();
+        }
+        else if (context.phase == InputActionPhase.Canceled)
+        {
+            movementInput = Vector2.zero;
+        }
     }
 }
