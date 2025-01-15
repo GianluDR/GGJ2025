@@ -50,7 +50,7 @@ public class MenuManager : MonoBehaviour, IPointerEnterHandler
         foreach (Resolution res in AllResolutions)
         {
             float resAspect = (float)res.width / res.height;
-            if (Mathf.Abs(resAspect - monitorAspect) < 0.01f) 
+            if (res.width <= 1920 && res.height <= 1080 && Mathf.Abs(resAspect - monitorAspect) < 0.01f)
             {
                 newRes = res.width.ToString() + " x " + res.height.ToString();
                 if(!resolutionStringList.Contains(newRes))
