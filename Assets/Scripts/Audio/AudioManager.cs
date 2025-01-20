@@ -6,7 +6,6 @@ using System.Collections.Generic;
 
 public class AudioManager : MonoBehaviour
 {
-
 	public static AudioManager instance;
 	public Sound[] sounds;
 	private Sound[] pausedSounds;
