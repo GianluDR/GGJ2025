@@ -1,5 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using System.Collections;
+using System.Collections.Generic;
 
 public class PlayerController : MonoBehaviour, IPausable
 {
@@ -9,6 +11,20 @@ public class PlayerController : MonoBehaviour, IPausable
     [SerializeField]private bool inPause = false; //NON SERIALIZE
     [SerializeField]private float speed = 5f; //NON SERIALIZE
     [SerializeField]private Vector2 movementInput; //NON SERIALIZE
+    [SerializeField]private float collisionOffset = 0.005f; //NON SERIALIZE
+    [SerializeField]private float moveSpeed = 5f; //NON SERIALIZE
+    [SerializeField]private bool isMoving; //NON SERIALIZE
+
+    private Rigidbody2D rb;
+    private List<RaycastHit2D> castCollisions = new List<RaycastHit2D>();
+    private ContactFilter2D movementFilter;
+
+
+    private void Start()
+    {
+        isMoving = false;
+        rb = GetComponent<Rigidbody2D>();
+    }
 
     private void Update()
     {
@@ -19,8 +35,9 @@ public class PlayerController : MonoBehaviour, IPausable
     {
         if (!inPause)
         {
-            Vector3 move = new Vector3(movementInput.x, movementInput.y, 0);
-            transform.Translate(move * speed * Time.deltaTime);
+            Vector2 direction = new Vector2(movementInput.x, movementInput.y);
+            //transform.Translate(direction * speed * Time.deltaTime);
+            TryMove(direction);
         }
     }
 
@@ -50,13 +67,36 @@ public class PlayerController : MonoBehaviour, IPausable
         PauseManager.UnregisterPausable(this);
     }
 
+    private void TryMove(Vector2 dir)
+    {
+        if (dir != Vector2.zero)
+        {
+            int count = rb.Cast(
+                    dir,
+                    movementFilter,
+                    castCollisions,
+                    (moveSpeed
+                        * Time.fixedDeltaTime)
+                        + collisionOffset);
+            if (count == 0)
+            {
+                isMoving = true;
+                rb.MovePosition(
+                    rb.position
+                    + dir
+                    * moveSpeed
+                    * Time.fixedDeltaTime);
+            }
+        }
+    }
+
     // Called by Unity Event
     public void OnMove(InputAction.CallbackContext context)
     {
         // read only if started or in process
         if (context.phase == InputActionPhase.Performed || context.phase == InputActionPhase.Started)
         {
-           movementInput = context.ReadValue<Vector2>();
+            movementInput = context.ReadValue<Vector2>();
         }
         else if (context.phase == InputActionPhase.Canceled)
         {
