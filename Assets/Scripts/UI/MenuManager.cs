@@ -47,6 +47,8 @@ public class MenuManager : MonoBehaviour, IPointerEnterHandler
         float monitorAspect = (float)Screen.currentResolution.width / Screen.currentResolution.height;
         Debug.Log("Monitor Aspect Ratio: " + monitorAspect);
 
+        int defaultResolutionIndex = 0; // Default to 0 if 1920x1080 is not found
+
         foreach (Resolution res in AllResolutions)
         {
             float resAspect = (float)res.width / res.height;
@@ -57,11 +59,27 @@ public class MenuManager : MonoBehaviour, IPointerEnterHandler
                 {
                     resolutionStringList.Add(newRes);
                     SelectedResolutionList.Add(res);
+
+                    if (res.width == 1920 && res.height == 1080)
+                    {
+                        defaultResolutionIndex = SelectedResolutionList.Count - 1;
+                    }
                 }
             }
         }
 
         ResDropDown.AddOptions(resolutionStringList);
+
+        // Set default resolution to Full HD
+        ResDropDown.value = defaultResolutionIndex;
+        SelectedResolution = defaultResolutionIndex;
+
+        // Apply the default resolution
+        Screen.SetResolution(
+            SelectedResolutionList[defaultResolutionIndex].width,
+            SelectedResolutionList[defaultResolutionIndex].height,
+            isFullScreen
+        );
 
         AdjustCameraToResolution();
     }
