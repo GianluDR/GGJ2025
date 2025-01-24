@@ -13,6 +13,12 @@ public class PlayerController : MonoBehaviour, IPausable
     [SerializeField]private Vector2 movementInput; //NON SERIALIZE
     [SerializeField]private float collisionOffset = 0.005f; //NON SERIALIZE
     [SerializeField]private float moveSpeed = 5f; //NON SERIALIZE
+    [Header("Bubble Attribute")]
+    [SerializeField]private bool inBubble = false; //NON SERIALIZE
+    [SerializeField]public float bubbleForce = 10f;
+    [Header("Sprites")]
+    [SerializeField]public Sprite spriteA; // Sprite iniziale
+    [SerializeField]public Sprite spriteB; // Sprite finale
 
     private Rigidbody2D rb;
 
@@ -20,11 +26,18 @@ public class PlayerController : MonoBehaviour, IPausable
     private List<RaycastHit2D> castCollisions = new List<RaycastHit2D>();
     private ContactFilter2D movementFilter;
 
+    private SpriteRenderer spriteRenderer;
 
     private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>(); 
+        spriteRenderer = GetComponent<SpriteRenderer>();
+
+        if (spriteA != null)
+        {
+            spriteRenderer.sprite = spriteA;
+        }
     }
 
     private void Update()
@@ -32,12 +45,13 @@ public class PlayerController : MonoBehaviour, IPausable
         
     }
 
-   private void FixedUpdate()
+    private void FixedUpdate()
     {
         if (!inPause)
         {   
             Vector2 direction = new Vector2(movementInput.x, movementInput.y);
             
+
             if(direction != Vector2.zero){
                 bool success = TryMove(direction);
 
@@ -114,10 +128,11 @@ public class PlayerController : MonoBehaviour, IPausable
                 tryM = false;
             }
             
-        }else
-            {
+        }
+        else
+        {
                 tryM = false;
-            }
+        }
         return tryM;
     }
 
@@ -134,4 +149,87 @@ public class PlayerController : MonoBehaviour, IPausable
             movementInput = Vector2.zero;
         }
     }
+
+    public void OnBubble()
+    {
+        if (spriteRenderer == null) return;
+
+        // Cambia lo sprite in base al parametro
+        if (!inBubble)
+        {
+            inBubble = true;
+            spriteRenderer.sprite = spriteB; // Cambia a spriteB
+
+            //rb.velocity = new Vector2(rb.velocity.x, bubbleForce);
+        }
+        else
+        {
+            inBubble = false;
+            spriteRenderer.sprite = spriteA; // Torna a spriteA
+
+            rb.velocity = Vector2.zero; 
+        }
+    }
+
+    public float initialHeight = 0;
+    public float forceMultiplier = 50f; // Moltiplicatore per aumentare la forza
+    public float exponentialGrowth = 10f; // Crescita esponenziale della forza
+    //public float maxHeight = 1f;
+    private void OnTriggerEnter2D(Collider2D hit)
+    {
+        if (hit.gameObject.CompareTag("Air"))
+        {
+            // Calcola la proporzionalità in base all'altezza del giocatore
+            initialHeight = transform.position.y;
+            Debug.Log(initialHeight);
+            
+        }
+    }
+
+    private void OnTriggerStay2D(Collider2D hit)
+    {
+        // Controllo per il trigger "Air"
+        if (hit.gameObject.CompareTag("Air"))
+        {
+            // Calcola la differenza di altezza rispetto all'altezza iniziale
+            float currentHeight = transform.position.y;
+            Debug.Log(initialHeight);
+            Debug.Log(currentHeight);
+            float heightDifference = currentHeight - initialHeight;
+
+            /*if (heightDifference > maxHeight)
+            {
+                float force = 100 * Mathf.Pow(heightDifference, 500); // Forza aumenta vertiginosamente
+                rb.AddForce(new Vector2(0, -force), ForceMode2D.Force);
+            }*/
+
+
+            // Aumenta la forza in base alla differenza di altezza
+            if (heightDifference > 0)
+            {
+                float force = forceMultiplier * Mathf.Pow(heightDifference, exponentialGrowth); // Forza aumenta vertiginosamente
+                rb.AddForce(new Vector2(0, -force), ForceMode2D.Force);
+            }
+
+            // Incrementa una statistica del player
+            /*PlayerStats playerStats = hit.gameObject.GetComponent<PlayerStats>();
+            if (playerStats != null)
+            {
+                playerStats.IncreaseStat("SomeStat", 10); // Modifica il nome della statistica e il valore da incrementare
+            }*/
+        }
+    }
+
+    private void OnTriggerExit2D(Collider2D hit)
+    {
+        if (hit.gameObject.CompareTag("Air"))
+        {
+            // Reset
+            rb.velocity = Vector2.zero; 
+            initialHeight = 0f;
+        }
+    }
+
+
+
 }
