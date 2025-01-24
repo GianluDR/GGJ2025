@@ -13,17 +13,18 @@ public class PlayerController : MonoBehaviour, IPausable
     [SerializeField]private Vector2 movementInput; //NON SERIALIZE
     [SerializeField]private float collisionOffset = 0.005f; //NON SERIALIZE
     [SerializeField]private float moveSpeed = 5f; //NON SERIALIZE
-    [SerializeField]private bool isMoving; //NON SERIALIZE
 
     private Rigidbody2D rb;
+
+    Animator animator;
     private List<RaycastHit2D> castCollisions = new List<RaycastHit2D>();
     private ContactFilter2D movementFilter;
 
 
     private void Start()
     {
-        isMoving = false;
         rb = GetComponent<Rigidbody2D>();
+        animator = GetComponent<Animator>(); 
     }
 
     private void Update()
@@ -31,13 +32,30 @@ public class PlayerController : MonoBehaviour, IPausable
         
     }
 
-    private void FixedUpdate()
+   private void FixedUpdate()
     {
         if (!inPause)
-        {
+        {   
             Vector2 direction = new Vector2(movementInput.x, movementInput.y);
-            //transform.Translate(direction * speed * Time.deltaTime);
+            
+            if(direction != Vector2.zero){
+                bool success = TryMove(direction);
+
+                if(!success){
+                    success = TryMove(new Vector2(direction.x, 0));
+                }
+                if(!success){
+                    success = TryMove(new Vector2(0, direction.y));
+                }
+                animator.SetBool("IsMoving", success);
+            }
+
+            else {
+                animator.SetBool("IsMoving", false);
+            }
+
             TryMove(direction);
+            
         }
     }
 
@@ -67,8 +85,10 @@ public class PlayerController : MonoBehaviour, IPausable
         PauseManager.UnregisterPausable(this);
     }
 
-    private void TryMove(Vector2 dir)
+    private bool TryMove(Vector2 dir)
     {
+        bool tryM = false;
+
         if (dir != Vector2.zero)
         {
             int count = rb.Cast(
@@ -78,16 +98,27 @@ public class PlayerController : MonoBehaviour, IPausable
                     (moveSpeed
                         * Time.fixedDeltaTime)
                         + collisionOffset);
+
             if (count == 0)
             {
-                isMoving = true;
                 rb.MovePosition(
                     rb.position
                     + dir
                     * moveSpeed
                     * Time.fixedDeltaTime);
+                tryM = true;
+                    
+            } 
+            else
+            {
+                tryM = false;
             }
-        }
+            
+        }else
+            {
+                tryM = false;
+            }
+        return tryM;
     }
 
     // Called by Unity Event
