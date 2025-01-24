@@ -13,6 +13,9 @@ public class PlayerController : MonoBehaviour, IPausable
     [SerializeField]private Vector2 movementInput; //NON SERIALIZE
     [SerializeField]private float collisionOffset = 0.005f; //NON SERIALIZE
     [SerializeField]private float moveSpeed = 5f; //NON SERIALIZE
+    [SerializeField]public float swimmingForce = 2f; // Forza di accelerazione per il nuoto
+    [SerializeField]public float maxSwimmingSpeed = 5f; // Velocità massima mentre nuota
+    [SerializeField]private bool inAir = false; //NON SERIALIZE
     [Header("Bubble Attribute")]
     [SerializeField]private bool inBubble = false; //NON SERIALIZE
     [SerializeField]public float bubbleForce = 10f;
@@ -49,29 +52,29 @@ public class PlayerController : MonoBehaviour, IPausable
     {
         if (!inPause)
         {   
-
-            if (inBubble)
+            Vector2 direction = new Vector2(movementInput.x, movementInput.y);
+            
+            if (inAir)
             {
                 rb.AddForce(Vector2.up * bubbleForce, ForceMode2D.Force); // Forza costante verso l'alto
             }
+            else
+            {
+                if(direction != Vector2.zero){
+                    bool success = TryMove(direction);
 
-            Vector2 direction = new Vector2(movementInput.x, movementInput.y);
-            
-
-            if(direction != Vector2.zero){
-                bool success = TryMove(direction);
-
-                if(!success){
-                    success = TryMove(new Vector2(direction.x, 0));
+                    if(!success){
+                        success = TryMove(new Vector2(direction.x, 0));
+                    }
+                    if(!success){
+                        success = TryMove(new Vector2(0, direction.y));
+                    }
+                    animator.SetBool("IsMoving", success);
                 }
-                if(!success){
-                    success = TryMove(new Vector2(0, direction.y));
-                }
-                animator.SetBool("IsMoving", success);
-            }
 
-            else {
-                animator.SetBool("IsMoving", false);
+                else {
+                    animator.SetBool("IsMoving", false);
+                }
             }
 
             TryMove(direction);
@@ -156,6 +159,18 @@ public class PlayerController : MonoBehaviour, IPausable
         }
     }
 
+    void Swim()
+    {
+        // Calcola la velocità orizzontale desiderata, limitandola al massimo di nuoto
+        float targetSpeed = movementInput.x * maxSwimmingSpeed;
+
+        // Interpola tra la velocità attuale e quella desiderata, simulando accelerazione
+        float newSpeed = Mathf.MoveTowards(rb.velocity.x, targetSpeed, swimmingForce * Time.deltaTime);
+
+        // Imposta la velocità finale (mantieni la velocità verticale invariata)
+        rb.velocity = new Vector2(newSpeed, rb.velocity.y);
+    }
+
     public void OnBubble()
     {
         if (spriteRenderer == null) return;
@@ -234,6 +249,10 @@ public class PlayerController : MonoBehaviour, IPausable
         }
     }
 
-
+    bool IsTouchingGround()
+    {
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.down, 0.1f);
+        return hit.collider != null;
+    }
 
 }
