@@ -49,6 +49,12 @@ public class PlayerController : MonoBehaviour, IPausable
     {
         if (!inPause)
         {   
+
+            if (inBubble)
+            {
+                rb.AddForce(Vector2.up * bubbleForce, ForceMode2D.Force); // Forza costante verso l'alto
+            }
+
             Vector2 direction = new Vector2(movementInput.x, movementInput.y);
             
 
@@ -159,8 +165,6 @@ public class PlayerController : MonoBehaviour, IPausable
         {
             inBubble = true;
             spriteRenderer.sprite = spriteB; // Cambia a spriteB
-
-            //rb.velocity = new Vector2(rb.velocity.x, bubbleForce);
         }
         else
         {
