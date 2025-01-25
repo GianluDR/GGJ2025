@@ -19,6 +19,8 @@ public class PlayerController : MonoBehaviour, IPausable
     [Header("Bubble Attribute")]
     [SerializeField]private int bubbleState = 0; //NON SERIALIZE -1 no bub 0 min bub 1 max bub
     [SerializeField]public float bubbleForce = 10f;
+    public float lastImpulseTime = 0f; // Tempo dell'ultimo impulso
+    public float impulseInterval = 0.5f; // Intervallo tra ogni scatto (in secondi)
     [Header("Sprites")]
     [SerializeField]public Sprite spriteNOB; // Sprite no bolla
     [SerializeField]public Sprite spriteMINB; //Sprite bolla piccola
@@ -56,30 +58,40 @@ public class PlayerController : MonoBehaviour, IPausable
         {   
             Vector2 direction = new Vector2(movementInput.x, movementInput.y);
             
-            if (inAir)
+            if (inBubble)
             {
                 rb.AddForce(Vector2.up * bubbleForce, ForceMode2D.Force); // Forza costante verso l'alto
+            }
+
+            if (inAir)
+            {
+                if(direction != Vector2.zero){
+                    if(Time.time - lastImpulseTime > impulseInterval)
+                    {
+                        lastImpulseTime = 0f;
+                        Swim();
+                    }
+                }
             }
             else
             {
                 if(direction != Vector2.zero){
-                    bool success = TryMove(direction);
+                    /*bool success = TryMove(direction);
 
                     if(!success){
                         success = TryMove(new Vector2(direction.x, 0));
                     }
                     if(!success){
                         success = TryMove(new Vector2(0, direction.y));
-                    }
-                    animator.SetBool("IsMoving", success);
+                    }*/
+                    animator.SetBool("IsMoving", /*success*/true);
                 }
-
                 else {
                     animator.SetBool("IsMoving", false);
                 }
+                
+                TryMove(new Vector2(direction.x,direction.y));
             }
-
-            TryMove(direction);
             
         }
     }
@@ -104,20 +116,20 @@ public class PlayerController : MonoBehaviour, IPausable
     {
         PauseManager.RegisterPausable(this);
 
-            BubbleUP.Enable();
-            BubbleUP.started+= OnBubbleUP;
-            BubbleDOWN.Enable();
-            BubbleDOWN.started+= OnBubbleDOWN;
+        BubbleUP.Enable();
+        BubbleUP.started+= OnBubbleUP;
+        BubbleDOWN.Enable();
+        BubbleDOWN.started+= OnBubbleDOWN;
     }
 
     private void OnDisable()
     {
         PauseManager.UnregisterPausable(this);
 
-         BubbleUP.started-= OnBubbleUP;
-         BubbleUP.Disable();
-         BubbleDOWN.started-= OnBubbleDOWN;
-         BubbleDOWN.Disable();
+        BubbleUP.started-= OnBubbleUP;
+        BubbleUP.Disable();
+        BubbleDOWN.started-= OnBubbleDOWN;
+        BubbleDOWN.Disable();
     }
 
     private bool TryMove(Vector2 dir)
@@ -152,7 +164,7 @@ public class PlayerController : MonoBehaviour, IPausable
         }
         else
         {
-                tryM = false;
+            tryM = false;
         }
         return tryM;
     }
@@ -173,20 +185,19 @@ public class PlayerController : MonoBehaviour, IPausable
 
     void Swim()
     {
-        // Calcola la velocità orizzontale desiderata, limitandola al massimo di nuoto
-        float targetSpeed = movementInput.x * maxSwimmingSpeed;
-
-        // Interpola tra la velocità attuale e quella desiderata, simulando accelerazione
-        float newSpeed = Mathf.MoveTowards(rb.velocity.x, targetSpeed, swimmingForce * Time.deltaTime);
-
         // Imposta la velocità finale (mantieni la velocità verticale invariata)
-        rb.velocity = new Vector2(newSpeed, rb.velocity.y);
+        rb.velocity = new Vector2(0f, 0f);
+        rb.AddForce(new Vector2(movementInput.x * swimmingForce, 0), ForceMode2D.Impulse);
+        if(movementInput.y > 0)
+            rb.AddForce(new Vector2(0, movementInput.y * swimmingForce * 0.35f), ForceMode2D.Impulse);
+        else
+            rb.AddForce(new Vector2(0, movementInput.y * swimmingForce * 1.15f), ForceMode2D.Impulse);
+            
+        lastImpulseTime = Time.time;
     }
 
     public void BubbleState()
     {
-        if (spriteRenderer == null) return;
-
         // Cambia lo sprite in base al parametro
         if (bubbleState<0)//NO BOLLA
         {
@@ -224,8 +235,6 @@ public class PlayerController : MonoBehaviour, IPausable
         {
             // Calcola la differenza di altezza rispetto all'altezza iniziale
             float currentHeight = transform.position.y;
-            //Debug.Log(initialHeight);
-           // Debug.Log(currentHeight);
             float heightDifference = currentHeight - initialHeight;
 
             /*if (heightDifference > maxHeight)
@@ -284,10 +293,20 @@ public class PlayerController : MonoBehaviour, IPausable
         }
     }
 
-    bool IsTouchingGround()
+    void OnCollisionEnter2D(Collision2D collision)
     {
-        RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.down, 0.1f);
-        return hit.collider != null;
+        if (collision.gameObject.CompareTag("Ground"))
+        {
+            inAir = false;
+        }
+    }
+
+    void OnCollisionExit2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Ground"))
+        {
+            inAir = true;
+        }  
     }
 
 }
