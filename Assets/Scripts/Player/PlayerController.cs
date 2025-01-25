@@ -74,21 +74,21 @@ public class PlayerController : MonoBehaviour, IPausable
             else
             {
                 if(direction != Vector2.zero){
-                    /*bool success = TryMove(direction);
+                    bool success = TryMove(direction);
 
                     if(!success){
                         success = TryMove(new Vector2(direction.x, 0));
                     }
                     if(!success){
                         success = TryMove(new Vector2(0, direction.y));
-                    }*/
-                    animator.SetBool("IsMoving", /*success*/true);
+                    }
+                    animator.SetBool("IsMoving", success);
                 }
                 else {
                     animator.SetBool("IsMoving", false);
                 }
                 
-                TryMove(new Vector2(direction.x,direction.y));
+                TryMove(direction);
             }
             
         }
@@ -183,13 +183,15 @@ public class PlayerController : MonoBehaviour, IPausable
 
     void Swim()
     {
+        Debug.Log(rb.velocity);
+
         // Imposta la velocità finale (mantieni la velocità verticale invariata)
         rb.velocity = new Vector2(0f, 0f);
-        rb.AddForce(new Vector2(movementInput.x * swimmingForce, 0), ForceMode2D.Impulse);
+        //rb.AddForce(new Vector2(, 0), ForceMode2D.Impulse);
         if(movementInput.y > 0)
-            rb.AddForce(new Vector2(0, movementInput.y * swimmingForce * 0.35f), ForceMode2D.Impulse);
+            rb.AddForce(new Vector2(movementInput.x * swimmingForce, movementInput.y * swimmingForce * 0.35f), ForceMode2D.Impulse);
         else
-            rb.AddForce(new Vector2(0, movementInput.y * swimmingForce * 1.15f), ForceMode2D.Impulse);
+            rb.AddForce(new Vector2(movementInput.x * swimmingForce, movementInput.y * swimmingForce * 1.15f), ForceMode2D.Impulse);
             
         lastImpulseTime = Time.time;
     }
