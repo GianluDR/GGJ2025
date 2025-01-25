@@ -15,6 +15,7 @@ public class PlayerController : MonoBehaviour, IPausable
     [SerializeField]private float moveSpeed = 5f; //NON SERIALIZE
     [SerializeField]public float swimmingForce = 2f; // Forza di accelerazione per il nuoto
     [SerializeField]public float maxSwimmingSpeed = 5f; // Velocità massima mentre nuota
+    [SerializeField]public float jumpForce = 3f;
     [SerializeField]private bool inAir = false; //NON SERIALIZE
     [Header("Bubble Attribute")]
     [SerializeField]private int bubbleState = 0; //NON SERIALIZE -1 vuln; 0 schien bub; 1 min bub; 2 max bub
@@ -134,7 +135,7 @@ public class PlayerController : MonoBehaviour, IPausable
         BubbleDOWN.Disable();
     }
 
-    private bool TryMove(Vector2 dir)
+    /*private bool TryMove(Vector2 dir)
     {
         bool tryM = false;
 
@@ -169,8 +170,43 @@ public class PlayerController : MonoBehaviour, IPausable
             tryM = false;
         }
         return tryM;
+    }*/
+    private bool TryMove(Vector2 dir)
+{
+    bool tryM = false;
+
+    if (dir != Vector2.zero)
+    {
+        // Controlla le collisioni
+        int count = rb.Cast(
+            dir,
+            movementFilter,
+            castCollisions,
+            (moveSpeed * Time.fixedDeltaTime) + collisionOffset
+        );
+
+        if (count == 0)
+        {
+            // Calcola la forza da applicare
+            Vector2 force = dir.normalized * moveSpeed;
+
+            // Applica la forza al rigidbody
+            rb.AddForce(force, ForceMode2D.Force);
+
+            tryM = true;
+        }
+        else
+        {
+            tryM = false;
+        }
+    }
+    else
+    {
+        tryM = false;
     }
 
+    return tryM;
+}
     // Called by Unity Event
     public void OnMove(InputAction.CallbackContext context)
     {
@@ -316,7 +352,7 @@ public class PlayerController : MonoBehaviour, IPausable
             {
                 if(bubbleState==1)
                 {
-                    //REFUND OSSIGENDO DA BOLLA GRANDE A PICCOLA
+                    //REFUND OSSIGENO DA BOLLA GRANDE A PICCOLA
                 }
                 bubbleState--;
                 BubbleState();
@@ -329,7 +365,7 @@ public class PlayerController : MonoBehaviour, IPausable
         Debug.Log("saltaaaaa");
             if (!inAir)
             {
-                rb.AddForce(Vector2.up * 1, ForceMode2D.Impulse);
+                rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
                 Debug.Log("saltaaaaa");
 
             }        
