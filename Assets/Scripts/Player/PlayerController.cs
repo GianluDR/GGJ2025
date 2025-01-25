@@ -38,6 +38,7 @@ public class PlayerController : MonoBehaviour, IPausable
     [SerializeField] private InputAction BubbleUP;
     [SerializeField] private InputAction BubbleDOWN;
     Animator animator;
+    Animator bubbleAnimator;
     private List<RaycastHit2D> castCollisions = new List<RaycastHit2D>();
     private ContactFilter2D movementFilter;
     private SpriteRenderer spriteRenderer;
@@ -47,6 +48,7 @@ public class PlayerController : MonoBehaviour, IPausable
     {
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>(); 
+        bubbleAnimator = GetComponentInChildren<Animator>();
         spriteRenderer = GetComponent<SpriteRenderer>();
 
         BubbleState();
@@ -277,6 +279,9 @@ public class PlayerController : MonoBehaviour, IPausable
             bubblePos.localScale = new Vector3(1f,1f,1f);
             bubbleRenderer.sprite = spriteSCB;
             bubbleForce=(-3f);
+            bubbleAnimator.SetBool("isOnBack", true);
+            bubbleAnimator.SetBool("isSmall", false);
+            bubbleAnimator.SetBool("isBig", false);
             //NUOTO RALLENTATO
             //VELOCITA LATERALE A TERRA AUMENTATA
             //OSSIGENO CONSUMATO Y
@@ -288,6 +293,9 @@ public class PlayerController : MonoBehaviour, IPausable
             bubbleRenderer.sprite = spriteMINB;
             
             bubbleForce=(-2f);
+            bubbleAnimator.SetBool("isOnBack", false);
+            bubbleAnimator.SetBool("isSmall", true);
+            bubbleAnimator.SetBool("isBig", false);
             //NUOTO VELOCIZZATO
             //VELOCITA LATERALE A TERRA DIMINUITO
             //OSSIGENO CONSUMATO Z
@@ -298,6 +306,9 @@ public class PlayerController : MonoBehaviour, IPausable
             bubblePos.localScale = new Vector3(1.5f,1.5f,1.5f);
             bubbleRenderer.sprite = spriteMAXB;
             bubbleForce=(5f);
+            bubbleAnimator.SetBool("isOnBack", false);
+            bubbleAnimator.SetBool("isSmall", false);
+            bubbleAnimator.SetBool("isBig", true);
             //NUOTO VELOCIZZATO
             //VELOCITA LATERALE A TERRA DIMINUITO
             //OSSIGENO CONSUMATO Z
