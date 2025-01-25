@@ -29,6 +29,7 @@ public class PlayerController : MonoBehaviour, IPausable
     public float impulseInterval = 0.5f; // Intervallo tra ogni scatto (in secondi)
     [Header("Bubble")]
     [SerializeField]public SpriteRenderer bubbleRenderer; // Sprite vulnerabile
+    [SerializeField]private Animator bubbleAnimator;
     [SerializeField]public Transform bubblePos; // Sprite vulnerabile
     [SerializeField]public Sprite spriteVUL; // Sprite vulnerabile
     [SerializeField]public Sprite spriteSCB; // Sprite bollaschiena
@@ -38,7 +39,7 @@ public class PlayerController : MonoBehaviour, IPausable
     [SerializeField] private InputAction BubbleUP;
     [SerializeField] private InputAction BubbleDOWN;
     Animator animator;
-    Animator bubbleAnimator;
+    
     private List<RaycastHit2D> castCollisions = new List<RaycastHit2D>();
     private ContactFilter2D movementFilter;
     private SpriteRenderer spriteRenderer;
@@ -47,8 +48,7 @@ public class PlayerController : MonoBehaviour, IPausable
     private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
-        animator = GetComponent<Animator>(); 
-        bubbleAnimator = GetComponentInChildren<Animator>();
+        animator = GetComponent<Animator>();
         spriteRenderer = GetComponent<SpriteRenderer>();
 
         BubbleState();
