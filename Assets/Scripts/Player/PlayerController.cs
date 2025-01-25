@@ -17,12 +17,19 @@ public class PlayerController : MonoBehaviour, IPausable
     [SerializeField]public float maxSwimmingSpeed = 5f; // Velocità massima mentre nuota
     [SerializeField]public float jumpForce = 3f;
     [SerializeField]private bool inAir = false; //NON SERIALIZE
+    [Header("Survival Attribute")]
+    [SerializeField]private float maxOxygen;
+    [SerializeField]private float oxygen;
+    [SerializeField]private float oxygenOT = 2f;
+    //public Slider hungerSlider;
     [Header("Bubble Attribute")]
     [SerializeField]private int bubbleState = 0; //NON SERIALIZE -1 vuln; 0 schien bub; 1 min bub; 2 max bub
     [SerializeField]public float bubbleForce = 0f;
     public float lastImpulseTime = 0f; // Tempo dell'ultimo impulso
     public float impulseInterval = 0.5f; // Intervallo tra ogni scatto (in secondi)
-    [Header("Sprites")]
+    [Header("Bubble")]
+    [SerializeField]public SpriteRenderer bubbleRenderer; // Sprite vulnerabile
+    [SerializeField]public Transform bubblePos; // Sprite vulnerabile
     [SerializeField]public Sprite spriteVUL; // Sprite vulnerabile
     [SerializeField]public Sprite spriteSCB; // Sprite bollaschiena
     [SerializeField]public Sprite spriteMINB; //Sprite bolla piccola
@@ -47,7 +54,7 @@ public class PlayerController : MonoBehaviour, IPausable
 
     private void Update()
     {
-
+        oxygen = oxygen - oxygenOT * Time.deltaTime;
     }
   
 
@@ -236,7 +243,7 @@ public class PlayerController : MonoBehaviour, IPausable
 
         if (bubbleState==-1)//VULNERABILE
         {
-            spriteRenderer.sprite = spriteVUL;
+            bubbleRenderer.sprite = spriteVUL;
             bubbleForce=(-4f);
             //NUOTO QUASI ANNULLATO
             //VELOCITA LATERALE AUMENTATA
@@ -245,7 +252,9 @@ public class PlayerController : MonoBehaviour, IPausable
 
         if (bubbleState==0)//BOLLA SCHIENA
         {
-            spriteRenderer.sprite = spriteSCB;
+            bubblePos.localPosition = new Vector3(-0.22f,0.19f,0f);
+            bubblePos.localScale = new Vector3(1f,1f,1f);
+            bubbleRenderer.sprite = spriteSCB;
             bubbleForce=(-3f);
             //NUOTO RALLENTATO
             //VELOCITA LATERALE A TERRA AUMENTATA
@@ -253,7 +262,10 @@ public class PlayerController : MonoBehaviour, IPausable
         }
         else if(bubbleState==1)//BOLLA PICCOLA
         {
-            spriteRenderer.sprite = spriteMINB;
+            bubblePos.localPosition = new Vector3(0f,0f,0f);
+            bubblePos.localScale = new Vector3(1f,1f,1f);
+            bubbleRenderer.sprite = spriteMINB;
+            
             bubbleForce=(-2f);
             //NUOTO VELOCIZZATO
             //VELOCITA LATERALE A TERRA DIMINUITO
@@ -261,7 +273,9 @@ public class PlayerController : MonoBehaviour, IPausable
         }
         else if(bubbleState==2)//BOLLA GRANDE
         {
-            spriteRenderer.sprite = spriteMAXB;
+            bubblePos.localPosition = new Vector3(0f,0f,0f);
+            bubblePos.localScale = new Vector3(1.5f,1.5f,1.5f);
+            bubbleRenderer.sprite = spriteMAXB;
             bubbleForce=(5f);
             //NUOTO VELOCIZZATO
             //VELOCITA LATERALE A TERRA DIMINUITO
@@ -279,7 +293,11 @@ public class PlayerController : MonoBehaviour, IPausable
         {
             // Calcola la proporzionalità in base all'altezza del giocatore
             initialHeight = transform.position.y;
-            
+        }
+        if (hit.gameObject.CompareTag("Obstacle"))
+        {
+            bubbleState = -1;
+            BubbleState();
         }
     }
 
@@ -366,11 +384,11 @@ public class PlayerController : MonoBehaviour, IPausable
             if (!inAir)
             {
                 rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
+                rb.AddForce(new Vector2(movementInput.x,0) * jumpForce, ForceMode2D.Impulse);
                 Debug.Log("saltaaaaa");
 
             }        
     }
-
 
     void OnCollisionEnter2D(Collision2D collision)
     {
