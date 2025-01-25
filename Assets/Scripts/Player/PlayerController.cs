@@ -61,7 +61,18 @@ public class PlayerController : MonoBehaviour, IPausable
     private void FixedUpdate()
     {
         if (!inPause)
-        {   
+        {  
+            if (movementInput.x < 0)
+            {
+                spriteRenderer.flipX = true; // Flip the sprite to face left
+                bubbleRenderer.flipX = true; // Flip the sprite to face left
+            }
+            else if (movementInput.x > 0)
+            {
+                spriteRenderer.flipX = false; // Keep the sprite facing right
+                bubbleRenderer.flipX = false; // Flip the sprite to face left
+            }
+
             Vector2 direction = new Vector2(movementInput.x, movementInput.y);
             
             rb.AddForce(Vector2.up * bubbleForce, ForceMode2D.Force);
@@ -178,42 +189,50 @@ public class PlayerController : MonoBehaviour, IPausable
         }
         return tryM;
     }*/
+
     private bool TryMove(Vector2 dir)
-{
-    bool tryM = false;
-
-    if (dir != Vector2.zero)
     {
-        // Controlla le collisioni
-        int count = rb.Cast(
-            dir,
-            movementFilter,
-            castCollisions,
-            (moveSpeed * Time.fixedDeltaTime) + collisionOffset
-        );
+        bool tryM = false;
 
-        if (count == 0)
+        if (dir != Vector2.zero)
         {
-            // Calcola la forza da applicare
-            Vector2 force = dir.normalized * moveSpeed;
+            // Controlla le collisioni
+            int count = rb.Cast(
+                dir,
+                movementFilter,
+                castCollisions,
+                (moveSpeed * Time.fixedDeltaTime) + collisionOffset
+            );
 
-            // Applica la forza al rigidbody
-            rb.AddForce(force, ForceMode2D.Force);
+            if (count == 0)
+            {
+                /*rb.MovePosition(
+                    rb.position
+                    + dir
+                    * moveSpeed
+                    * Time.fixedDeltaTime);*/
 
-            tryM = true;
+                // Calcola la forza da applicare
+                Vector2 force = dir.normalized * moveSpeed;
+
+                // Applica la forza al rigidbody
+                rb.AddForce(force, ForceMode2D.Force);
+
+                tryM = true;
+            }
+            else
+            {
+                tryM = false;
+            }
         }
         else
         {
             tryM = false;
         }
-    }
-    else
-    {
-        tryM = false;
+
+        return tryM;
     }
 
-    return tryM;
-}
     // Called by Unity Event
     public void OnMove(InputAction.CallbackContext context)
     {
@@ -229,25 +248,27 @@ public class PlayerController : MonoBehaviour, IPausable
 
         // Imposta la velocità finale (mantieni la velocità verticale invariata)
         rb.velocity = new Vector2(0f, 0f);
-        //rb.AddForce(new Vector2(, 0), ForceMode2D.Impulse);
-        if(movementInput.y > 0)
+        ////rb.AddForce(new Vector2(, 0), ForceMode2D.Impulse);
+        if(movementInput.y > 0){
             rb.AddForce(new Vector2(movementInput.x * swimmingForce, movementInput.y * swimmingForce * 0.35f), ForceMode2D.Impulse);
-        else
+        }else{
             rb.AddForce(new Vector2(movementInput.x * swimmingForce, movementInput.y * swimmingForce * 1.15f), ForceMode2D.Impulse);
-            
+        }
+
         lastImpulseTime = Time.time;
     }
 
+
+    
     public void BubbleState()
     {
-
         if (bubbleState==-1)//VULNERABILE
         {
             bubbleRenderer.sprite = spriteVUL;
             bubbleForce=(-4f);
             //NUOTO QUASI ANNULLATO
             //VELOCITA LATERALE AUMENTATA
-            //OSSIGENO CONSUMATO X
+            
         }
 
         if (bubbleState==0)//BOLLA SCHIENA
@@ -280,6 +301,7 @@ public class PlayerController : MonoBehaviour, IPausable
             //NUOTO VELOCIZZATO
             //VELOCITA LATERALE A TERRA DIMINUITO
             //OSSIGENO CONSUMATO Z
+            
         }
     }
 
@@ -343,6 +365,11 @@ public class PlayerController : MonoBehaviour, IPausable
         }
     }
      
+
+    public float oxygenVUL;
+    public float oxygenToSCB;
+    public float oxygenMINB;
+    public float oxygenToMAXB;
     public void OnBubbleUP(InputAction.CallbackContext context)
     {
         if (context.started){
@@ -350,18 +377,19 @@ public class PlayerController : MonoBehaviour, IPausable
             {
                 if(bubbleState==1)
                 {
-                    //COSTO OSSIGENO DA BOLLA PICCOLA A GRANDE
+                    //TOGLIERE OSSIGENO PER DA PICCOLA A GRANDE
+                    changeOxygen(oxygenToMAXB);
                 }
                 if(bubbleState==-1)
                 {
-                    //GRANDE COSTO OSSIGENO DA NO BOLLA A BOLLA SCHIENA/PICCOLA
+                    //TIGLIERE OSSIGENO PER DA SENZA A RICREARE LA BOLLA
+                    changeOxygen(oxygenToSCB);
                 }
                 bubbleState++;
                 BubbleState();
             }
         }
     } 
-    
 
     void OnBubbleDOWN(InputAction.CallbackContext context)
     {
@@ -371,6 +399,7 @@ public class PlayerController : MonoBehaviour, IPausable
                 if(bubbleState==1)
                 {
                     //REFUND OSSIGENO DA BOLLA GRANDE A PICCOLA
+                    changeOxygen(oxygenToSCB);
                 }
                 bubbleState--;
                 BubbleState();
@@ -378,15 +407,22 @@ public class PlayerController : MonoBehaviour, IPausable
         }
     }
 
+    private void changeOxygen(float n)
+    {
+        if(oxygen<5)
+        {
+            //esplosione
+        }
+        oxygen = oxygen - n;
+    }
+
     public void OnJump()
     {
-        Debug.Log("saltaaaaa");
             if (!inAir)
             {
                 rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
-                rb.AddForce(new Vector2(movementInput.x,0) * jumpForce, ForceMode2D.Impulse);
-                Debug.Log("saltaaaaa");
-
+                ////rb.AddForce(new Vector2(movementInput.x,0) * jumpForce, ForceMode2D.Impulse);
+                //rb.velocity = new Vector2(rb.velocity.x, 20);
             }        
     }
 
