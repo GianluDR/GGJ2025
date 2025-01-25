@@ -68,11 +68,15 @@ public class PlayerController : MonoBehaviour, IPausable
             {
                 spriteRenderer.flipX = true; // Flip the sprite to face left
                 bubbleRenderer.flipX = true; // Flip the sprite to face left
+                if(bubbleState == 0)
+                    bubblePos.localPosition = new Vector2(0.22f,0.19f);
             }
             else if (movementInput.x > 0)
             {
                 spriteRenderer.flipX = false; // Keep the sprite facing right
                 bubbleRenderer.flipX = false; // Flip the sprite to face left
+                if(bubbleState == 0)
+                    bubblePos.localPosition = new Vector2(-0.22f,0.19f);
             }
 
             Vector2 direction = new Vector2(movementInput.x, movementInput.y);
@@ -261,14 +265,18 @@ public class PlayerController : MonoBehaviour, IPausable
     }
 
 
-    
+    [Header("Swimming Speed State")]
+    [SerializeField]private float swimmingForceVUL;
+    [SerializeField]private float swimmingForceSCB;
+    [SerializeField]private float swimmingForceMINB;
+    [SerializeField]private float swimmingForceMAXB;
     public void BubbleState()
     {
         if (bubbleState==-1)//VULNERABILE
         {
             bubbleRenderer.sprite = spriteVUL;
             bubbleForce=(-4f);
-            //NUOTO QUASI ANNULLATO
+            swimmingForce = swimmingForceVUL;
             //VELOCITA LATERALE AUMENTATA
             
         }
@@ -276,12 +284,15 @@ public class PlayerController : MonoBehaviour, IPausable
         if (bubbleState==0)//BOLLA SCHIENA
         {
             bubblePos.localPosition = new Vector3(-0.22f,0.19f,0f);
-            bubblePos.localScale = new Vector3(1f,1f,1f);
+            //bubblePos.localScale = new Vector3(1f,1f,1f);
             bubbleRenderer.sprite = spriteSCB;
+            swimmingForce = swimmingForceSCB;
+
             bubbleForce=(-3f);
             bubbleAnimator.SetBool("isOnBack", true);
             bubbleAnimator.SetBool("isSmall", false);
             bubbleAnimator.SetBool("isBig", false);
+
             //NUOTO RALLENTATO
             //VELOCITA LATERALE A TERRA AUMENTATA
             //OSSIGENO CONSUMATO Y
@@ -289,9 +300,10 @@ public class PlayerController : MonoBehaviour, IPausable
         else if(bubbleState==1)//BOLLA PICCOLA
         {
             bubblePos.localPosition = new Vector3(0f,0f,0f);
-            bubblePos.localScale = new Vector3(1f,1f,1f);
+            //bubblePos.localScale = new Vector3(1f,1f,1f);
             bubbleRenderer.sprite = spriteMINB;
-            
+            swimmingForce = swimmingForceMINB;
+
             bubbleForce=(-2f);
             bubbleAnimator.SetBool("isOnBack", false);
             bubbleAnimator.SetBool("isSmall", true);
@@ -303,8 +315,10 @@ public class PlayerController : MonoBehaviour, IPausable
         else if(bubbleState==2)//BOLLA GRANDE
         {
             bubblePos.localPosition = new Vector3(0f,0f,0f);
-            bubblePos.localScale = new Vector3(1.5f,1.5f,1.5f);
+            //bubblePos.localScale = new Vector3(1.5f,1.5f,1.5f);
             bubbleRenderer.sprite = spriteMAXB;
+            swimmingForce = swimmingForceMAXB;
+
             bubbleForce=(5f);
             bubbleAnimator.SetBool("isOnBack", false);
             bubbleAnimator.SetBool("isSmall", false);
