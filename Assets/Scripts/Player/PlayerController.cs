@@ -17,12 +17,13 @@ public class PlayerController : MonoBehaviour, IPausable
     [SerializeField]public float maxSwimmingSpeed = 5f; // Velocità massima mentre nuota
     [SerializeField]private bool inAir = false; //NON SERIALIZE
     [Header("Bubble Attribute")]
-    [SerializeField]private int bubbleState = 0; //NON SERIALIZE -1 no bub 0 min bub 1 max bub
+    [SerializeField]private int bubbleState = 0; //NON SERIALIZE -1 vuln; 0 schien bub; 1 min bub; 2 max bub
     [SerializeField]public float bubbleForce = 0f;
     public float lastImpulseTime = 0f; // Tempo dell'ultimo impulso
     public float impulseInterval = 0.5f; // Intervallo tra ogni scatto (in secondi)
     [Header("Sprites")]
-    [SerializeField]public Sprite spriteNOB; // Sprite no bolla
+    [SerializeField]public Sprite spriteVUL; // Sprite vulnerabile
+    [SerializeField]public Sprite spriteSCB; // Sprite bollaschiena
     [SerializeField]public Sprite spriteMINB; //Sprite bolla piccola
     [SerializeField]public Sprite spriteMAXB; //Sprite bolla grande
     private Rigidbody2D rb;
@@ -40,10 +41,7 @@ public class PlayerController : MonoBehaviour, IPausable
         animator = GetComponent<Animator>(); 
         spriteRenderer = GetComponent<SpriteRenderer>();
 
-        if (spriteNOB != null)
-        {
-            spriteRenderer.sprite = spriteNOB;
-        }
+        BubbleState();
     }
 
     private void Update()
@@ -183,7 +181,7 @@ public class PlayerController : MonoBehaviour, IPausable
 
     void Swim()
     {
-        Debug.Log(rb.velocity);
+        //Debug.Log(rb.velocity);
 
         // Imposta la velocità finale (mantieni la velocità verticale invariata)
         rb.velocity = new Vector2(0f, 0f);
@@ -198,21 +196,39 @@ public class PlayerController : MonoBehaviour, IPausable
 
     public void BubbleState()
     {
-        // Cambia lo sprite in base al parametro
-        if (bubbleState<0)//NO BOLLA
+
+        if (bubbleState==-1)//VULNERABILE
         {
-            spriteRenderer.sprite = spriteNOB;
-            bubbleForce=0f;
+            spriteRenderer.sprite = spriteVUL;
+            bubbleForce=(-4f);
+            //NUOTO QUASI ANNULLATO
+            //VELOCITA LATERALE AUMENTATA
+            //OSSIGENO CONSUMATO X
         }
-        else if(bubbleState==0)//BOLLA PICCOLA
+
+        if (bubbleState==0)//BOLLA SCHIENA
+        {
+            spriteRenderer.sprite = spriteSCB;
+            bubbleForce=(-3f);
+            //NUOTO RALLENTATO
+            //VELOCITA LATERALE A TERRA AUMENTATA
+            //OSSIGENO CONSUMATO Y
+        }
+        else if(bubbleState==1)//BOLLA PICCOLA
         {
             spriteRenderer.sprite = spriteMINB;
-            bubbleForce=-3f;
+            bubbleForce=(-2f);
+            //NUOTO VELOCIZZATO
+            //VELOCITA LATERALE A TERRA DIMINUITO
+            //OSSIGENO CONSUMATO Z
         }
-        else if(bubbleState>0)//BOLLA GRANDE
+        else if(bubbleState==2)//BOLLA GRANDE
         {
             spriteRenderer.sprite = spriteMAXB;
-            bubbleForce=5f;
+            bubbleForce=(5f);
+            //NUOTO VELOCIZZATO
+            //VELOCITA LATERALE A TERRA DIMINUITO
+            //OSSIGENO CONSUMATO Z
         }
     }
 
@@ -275,8 +291,16 @@ public class PlayerController : MonoBehaviour, IPausable
     public void OnBubbleUP(InputAction.CallbackContext context)
     {
         if (context.started){
-            if (bubbleState < 1)
+            if (bubbleState < 2)
             {
+                if(bubbleState==1)
+                {
+                    //COSTO OSSIGENO DA BOLLA PICCOLA A GRANDE
+                }
+                if(bubbleState==-1)
+                {
+                    //GRANDE COSTO OSSIGENO DA NO BOLLA A BOLLA SCHIENA/PICCOLA
+                }
                 bubbleState++;
                 BubbleState();
             }
@@ -288,12 +312,28 @@ public class PlayerController : MonoBehaviour, IPausable
     {
         if (context.started){
             if (bubbleState > -1)
+            {
+                if(bubbleState==1)
                 {
-                    bubbleState--;
-                    BubbleState();
+                    //REFUND OSSIGENDO DA BOLLA GRANDE A PICCOLA
                 }
+                bubbleState--;
+                BubbleState();
+            }
         }
     }
+
+    public void OnJump()
+    {
+        Debug.Log("saltaaaaa");
+            if (!inAir)
+            {
+                rb.AddForce(Vector2.up * 1, ForceMode2D.Impulse);
+                Debug.Log("saltaaaaa");
+
+            }        
+    }
+
 
     void OnCollisionEnter2D(Collision2D collision)
     {

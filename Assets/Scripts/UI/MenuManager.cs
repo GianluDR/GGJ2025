@@ -45,7 +45,7 @@ public class MenuManager : MonoBehaviour, IPointerEnterHandler
 
         // Monitor aspect ratio
         float monitorAspect = (float)Screen.currentResolution.width / Screen.currentResolution.height;
-        Debug.Log("Monitor Aspect Ratio: " + monitorAspect);
+        //Debug.Log("Monitor Aspect Ratio: " + monitorAspect);
 
         int defaultResolutionIndex = 0; // Default to 0 if 1920x1080 is not found
 
