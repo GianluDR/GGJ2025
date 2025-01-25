@@ -3195,10 +3195,48 @@ MonoBehaviour:
   movementInput: {x: 0, y: 0}
   collisionOffset: 0.005
   moveSpeed: 3
-  inBubble: 0
+  swimmingForce: 2
+  maxSwimmingSpeed: 5
+  inAir: 0
+  bubbleState: -1
   bubbleForce: 5
-  spriteA: {fileID: 21300000, guid: c9a3b1839957ad749b5752f78c56cceb, type: 3}
-  spriteB: {fileID: 21300000, guid: 5f5d0c1810223704c93c95f9feed3830, type: 3}
+  spriteNOB: {fileID: 21300000, guid: c9a3b1839957ad749b5752f78c56cceb, type: 3}
+  spriteMINB: {fileID: 21300000, guid: 5f5d0c1810223704c93c95f9feed3830, type: 3}
+  spriteMAXB: {fileID: 1865078383, guid: 877c69d07fa819f4f8f7dd9d65467ca5, type: 3}
+  BubbleUP:
+    m_Name: Bubble UP
+    m_Type: 1
+    m_ExpectedControlType: Button
+    m_Id: 11cf77e1-a361-47b8-b84b-e96650810fe2
+    m_Processors: 
+    m_Interactions: 
+    m_SingletonActionBindings:
+    - m_Name: 
+      m_Id: 5435d7ef-4549-4341-8c71-67cae03c7be1
+      m_Path: <Keyboard>/e
+      m_Interactions: Press
+      m_Processors: 
+      m_Groups: 
+      m_Action: Bubble UP
+      m_Flags: 0
+    m_Flags: 0
+  BubbleDOWN:
+    m_Name: Bubble DOWN
+    m_Type: 1
+    m_ExpectedControlType: Button
+    m_Id: 94296063-28ed-4b71-b497-97c36fa101e5
+    m_Processors: 
+    m_Interactions: 
+    m_SingletonActionBindings:
+    - m_Name: 
+      m_Id: 33ed4434-4e34-4575-8cbd-266a30ac8a4e
+      m_Path: <Keyboard>/q
+      m_Interactions: Press
+      m_Processors: 
+      m_Groups: 
+      m_Action: Bubble DOWN
+      m_Flags: 0
+    m_Flags: 0
   initialHeight: 0
   forceMultiplier: 50
   exponentialGrowth: 2.5
@@ -3323,7 +3361,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 640616282}
         m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
-        m_MethodName: OnBubble
+        m_MethodName: OnBubbleUP
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -3335,6 +3373,22 @@ MonoBehaviour:
         m_CallState: 2
     m_ActionId: 6522e983-430a-49e6-b815-5dd309a12bc2
     m_ActionName: Player/Bubble[/Keyboard/f]
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 640616282}
+        m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
+        m_MethodName: OnBubbleDOWN
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 1d051257-bf42-4366-bc1a-73597fb4e223
+    m_ActionName: Player/BubbleDOWN[/Keyboard/s]
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player

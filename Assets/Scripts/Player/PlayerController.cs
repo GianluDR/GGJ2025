@@ -17,19 +17,20 @@ public class PlayerController : MonoBehaviour, IPausable
     [SerializeField]public float maxSwimmingSpeed = 5f; // Velocità massima mentre nuota
     [SerializeField]private bool inAir = false; //NON SERIALIZE
     [Header("Bubble Attribute")]
-    [SerializeField]private bool inBubble = false; //NON SERIALIZE
+    [SerializeField]private int bubbleState = 0; //NON SERIALIZE -1 no bub 0 min bub 1 max bub
     [SerializeField]public float bubbleForce = 10f;
     [Header("Sprites")]
-    [SerializeField]public Sprite spriteA; // Sprite iniziale
-    [SerializeField]public Sprite spriteB; // Sprite finale
-
+    [SerializeField]public Sprite spriteNOB; // Sprite no bolla
+    [SerializeField]public Sprite spriteMINB; //Sprite bolla piccola
+    [SerializeField]public Sprite spriteMAXB; //Sprite bolla grande
     private Rigidbody2D rb;
-
+    [SerializeField] private InputAction BubbleUP;
+    [SerializeField] private InputAction BubbleDOWN;
     Animator animator;
     private List<RaycastHit2D> castCollisions = new List<RaycastHit2D>();
     private ContactFilter2D movementFilter;
-
     private SpriteRenderer spriteRenderer;
+
 
     private void Start()
     {
@@ -37,16 +38,17 @@ public class PlayerController : MonoBehaviour, IPausable
         animator = GetComponent<Animator>(); 
         spriteRenderer = GetComponent<SpriteRenderer>();
 
-        if (spriteA != null)
+        if (spriteNOB != null)
         {
-            spriteRenderer.sprite = spriteA;
+            spriteRenderer.sprite = spriteNOB;
         }
     }
 
     private void Update()
     {
-        
+
     }
+  
 
     private void FixedUpdate()
     {
@@ -101,11 +103,21 @@ public class PlayerController : MonoBehaviour, IPausable
     private void OnEnable()
     {
         PauseManager.RegisterPausable(this);
+
+            BubbleUP.Enable();
+            BubbleUP.started+= OnBubbleUP;
+            BubbleDOWN.Enable();
+            BubbleDOWN.started+= OnBubbleDOWN;
     }
 
     private void OnDisable()
     {
         PauseManager.UnregisterPausable(this);
+
+         BubbleUP.started-= OnBubbleUP;
+         BubbleUP.Disable();
+         BubbleDOWN.started-= OnBubbleDOWN;
+         BubbleDOWN.Disable();
     }
 
     private bool TryMove(Vector2 dir)
@@ -171,22 +183,23 @@ public class PlayerController : MonoBehaviour, IPausable
         rb.velocity = new Vector2(newSpeed, rb.velocity.y);
     }
 
-    public void OnBubble()
+    public void BubbleState()
     {
         if (spriteRenderer == null) return;
 
         // Cambia lo sprite in base al parametro
-        if (!inBubble)
+        if (bubbleState<0)//NO BOLLA
         {
-            inBubble = true;
-            spriteRenderer.sprite = spriteB; // Cambia a spriteB
+            spriteRenderer.sprite = spriteNOB;
         }
-        else
+        else if(bubbleState==0)//BOLLA PICCOLA
         {
-            inBubble = false;
-            spriteRenderer.sprite = spriteA; // Torna a spriteA
-
+            spriteRenderer.sprite = spriteMINB;
             rb.velocity = Vector2.zero; 
+        }
+        else if(bubbleState>0)//BOLLA GRANDE
+        {
+            spriteRenderer.sprite = spriteMAXB;
         }
     }
 
@@ -200,7 +213,6 @@ public class PlayerController : MonoBehaviour, IPausable
         {
             // Calcola la proporzionalità in base all'altezza del giocatore
             initialHeight = transform.position.y;
-            Debug.Log(initialHeight);
             
         }
     }
@@ -212,8 +224,8 @@ public class PlayerController : MonoBehaviour, IPausable
         {
             // Calcola la differenza di altezza rispetto all'altezza iniziale
             float currentHeight = transform.position.y;
-            Debug.Log(initialHeight);
-            Debug.Log(currentHeight);
+            //Debug.Log(initialHeight);
+           // Debug.Log(currentHeight);
             float heightDifference = currentHeight - initialHeight;
 
             /*if (heightDifference > maxHeight)
@@ -246,6 +258,29 @@ public class PlayerController : MonoBehaviour, IPausable
             // Reset
             rb.velocity = Vector2.zero; 
             initialHeight = 0f;
+        }
+    }
+     
+    public void OnBubbleUP(InputAction.CallbackContext context)
+    {
+        if (context.started){
+            if (bubbleState < 1)
+            {
+                bubbleState++;
+                BubbleState();
+            }
+        }
+    } 
+    
+
+    void OnBubbleDOWN(InputAction.CallbackContext context)
+    {
+        if (context.started){
+            if (bubbleState > -1)
+                {
+                    bubbleState--;
+                    BubbleState();
+                }
         }
     }
 

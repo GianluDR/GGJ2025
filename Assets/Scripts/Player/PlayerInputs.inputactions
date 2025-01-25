@@ -42,12 +42,21 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Bubble",
+                    "name": "BubbleUP",
                     "type": "Button",
                     "id": "6522e983-430a-49e6-b815-5dd309a12bc2",
                     "expectedControlType": "",
                     "processors": "",
-                    "interactions": "",
+                    "interactions": "Press",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "BubbleDOWN",
+                    "type": "Button",
+                    "id": "1d051257-bf42-4366-bc1a-73597fb4e223",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "Press",
                     "initialStateCheck": false
                 }
             ],
@@ -286,11 +295,22 @@
                 {
                     "name": "",
                     "id": "9e1b8789-2e3e-438f-be70-506ad7b24a8a",
-                    "path": "<Keyboard>/f",
+                    "path": "<Keyboard>/w",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Bubble",
+                    "action": "BubbleUP",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "5eb03ab7-81e6-4bd9-a37c-e3e6eb0dcf1f",
+                    "path": "<Keyboard>/s",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "BubbleDOWN",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
