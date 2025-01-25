@@ -18,7 +18,7 @@ public class PlayerController : MonoBehaviour, IPausable
     [SerializeField]private bool inAir = false; //NON SERIALIZE
     [Header("Bubble Attribute")]
     [SerializeField]private int bubbleState = 0; //NON SERIALIZE -1 no bub 0 min bub 1 max bub
-    [SerializeField]public float bubbleForce = 10f;
+    [SerializeField]public float bubbleForce = 0f;
     public float lastImpulseTime = 0f; // Tempo dell'ultimo impulso
     public float impulseInterval = 0.5f; // Intervallo tra ogni scatto (in secondi)
     [Header("Sprites")]
@@ -58,10 +58,8 @@ public class PlayerController : MonoBehaviour, IPausable
         {   
             Vector2 direction = new Vector2(movementInput.x, movementInput.y);
             
-            if (inBubble)
-            {
-                rb.AddForce(Vector2.up * bubbleForce, ForceMode2D.Force); // Forza costante verso l'alto
-            }
+            rb.AddForce(Vector2.up * bubbleForce, ForceMode2D.Force);
+            
 
             if (inAir)
             {
@@ -202,15 +200,17 @@ public class PlayerController : MonoBehaviour, IPausable
         if (bubbleState<0)//NO BOLLA
         {
             spriteRenderer.sprite = spriteNOB;
+            bubbleForce=0f;
         }
         else if(bubbleState==0)//BOLLA PICCOLA
         {
             spriteRenderer.sprite = spriteMINB;
-            rb.velocity = Vector2.zero; 
+            bubbleForce=-3f;
         }
         else if(bubbleState>0)//BOLLA GRANDE
         {
             spriteRenderer.sprite = spriteMAXB;
+            bubbleForce=5f;
         }
     }
 
