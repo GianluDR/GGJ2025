@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.InputSystem;
 using System.Collections;
 using System.Collections.Generic;
@@ -21,6 +22,7 @@ public class PlayerController : MonoBehaviour, IPausable
     [SerializeField]private float maxOxygen;
     [SerializeField]private float oxygen;
     [SerializeField]private float oxygenOT = 2f;
+    [SerializeField]public Slider oxygenSlider;
     //public Slider hungerSlider;
     [Header("Bubble Attribute")]
     [SerializeField]private int bubbleState = 0; //NON SERIALIZE -1 vuln; 0 schien bub; 1 min bub; 2 max bub
@@ -57,6 +59,11 @@ public class PlayerController : MonoBehaviour, IPausable
     private void Update()
     {
         oxygen = oxygen - oxygenOT * Time.deltaTime;
+        oxygenSlider.value = oxygen / maxOxygen;
+
+        if(oxygen == 0){
+            
+        }
     }
   
 
@@ -390,10 +397,9 @@ public class PlayerController : MonoBehaviour, IPausable
         }
     }
      
-
-    public float oxygenVUL;
-    public float oxygenToSCB;
-    public float oxygenMINB;
+    [Header("Oxygen")]
+    public float oxygenToSCBFromZero;
+    public float oxygenToSCBFromMax;
     public float oxygenToMAXB;
     public void OnBubbleUP(InputAction.CallbackContext context)
     {
@@ -408,7 +414,7 @@ public class PlayerController : MonoBehaviour, IPausable
                 if(bubbleState==-1)
                 {
                     //TIGLIERE OSSIGENO PER DA SENZA A RICREARE LA BOLLA
-                    changeOxygen(oxygenToSCB);
+                    changeOxygen(oxygenToSCBFromZero);
                 }
                 bubbleState++;
                 BubbleState();
@@ -424,7 +430,7 @@ public class PlayerController : MonoBehaviour, IPausable
                 if(bubbleState==1)
                 {
                     //REFUND OSSIGENO DA BOLLA GRANDE A PICCOLA
-                    changeOxygen(oxygenToSCB);
+                    changeOxygen(oxygenToSCBFromMax);
                 }
                 bubbleState--;
                 BubbleState();
