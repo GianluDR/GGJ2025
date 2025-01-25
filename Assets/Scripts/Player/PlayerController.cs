@@ -65,8 +65,14 @@ public class PlayerController : MonoBehaviour, IPausable
                     if(Time.time - lastImpulseTime > impulseInterval)
                     {
                         lastImpulseTime = 0f;
+                        animator.SetBool("InAir", inAir);
+                        animator.SetBool("IsMoving", true);
                         Swim();
                     }
+                }
+                else
+                {
+                    animator.SetBool("IsMoving", false);
                 }
             }
             else
@@ -169,14 +175,9 @@ public class PlayerController : MonoBehaviour, IPausable
     public void OnMove(InputAction.CallbackContext context)
     {
         // read only if started or in process
-        if (context.phase == InputActionPhase.Performed || context.phase == InputActionPhase.Started)
-        {
-            movementInput = context.ReadValue<Vector2>();
-        }
-        else if (context.phase == InputActionPhase.Canceled)
-        {
-            movementInput = Vector2.zero;
-        }
+
+        movementInput = context.ReadValue<Vector2>();
+
     }
 
     void Swim()
@@ -340,6 +341,7 @@ public class PlayerController : MonoBehaviour, IPausable
         if (collision.gameObject.CompareTag("Ground"))
         {
             inAir = false;
+            animator.SetBool("InAir", inAir);
         }
     }
 
@@ -348,6 +350,7 @@ public class PlayerController : MonoBehaviour, IPausable
         if (collision.gameObject.CompareTag("Ground"))
         {
             inAir = true;
+            animator.SetBool("InAir", inAir);
         }  
     }
 
