@@ -247,7 +247,7 @@ public class PlayerController : MonoBehaviour, IPausable
         //Debug.Log(rb.velocity);
 
         // Imposta la velocità finale (mantieni la velocità verticale invariata)
-        rb.velocity = new Vector2(0f, 0f);
+        //rb.velocity = new Vector2(0f, 0f);
         ////rb.AddForce(new Vector2(, 0), ForceMode2D.Impulse);
         if(movementInput.y > 0){
             rb.AddForce(new Vector2(movementInput.x * swimmingForce, movementInput.y * swimmingForce * 0.35f), ForceMode2D.Impulse);
@@ -360,7 +360,7 @@ public class PlayerController : MonoBehaviour, IPausable
         if (hit.gameObject.CompareTag("Air"))
         {
             // Reset
-            rb.velocity = Vector2.zero; 
+            //rb.velocity = Vector2.zero; 
             initialHeight = 0f;
         }
     }
@@ -418,12 +418,12 @@ public class PlayerController : MonoBehaviour, IPausable
 
     public void OnJump()
     {
-            if (!inAir)
-            {
-                rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
-                ////rb.AddForce(new Vector2(movementInput.x,0) * jumpForce, ForceMode2D.Impulse);
-                //rb.velocity = new Vector2(rb.velocity.x, 20);
-            }        
+        if (!inAir)
+        {
+            rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
+            //rb.AddForce(new Vector2(movementInput.x,0) * jumpForce, ForceMode2D.Impulse);
+            //rb.velocity = new Vector2(rb.velocity.x, 20);
+        }        
     }
 
     void OnCollisionEnter2D(Collision2D collision)
