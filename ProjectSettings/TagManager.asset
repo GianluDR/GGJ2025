@@ -7,6 +7,8 @@ TagManager:
   - Air
   - Ground
   - Obstacle
+  - Eddy
+  - Chele
   layers:
   - Default
   - TransparentFX

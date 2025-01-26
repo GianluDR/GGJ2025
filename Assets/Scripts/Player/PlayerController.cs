@@ -381,6 +381,22 @@ public class PlayerController : MonoBehaviour, IPausable
             BubbleState();
             FindObjectOfType<AudioManager>().Play("Hit");
         }
+        if (hit.gameObject.CompareTag("Chele"))
+        {
+            ObstacleChele obstacle = hit.GetComponent<ObstacleChele>();
+            if (obstacle != null)
+            {
+                if (obstacle != null)
+                {
+                    if (obstacle.movimentoCoroutine != null)
+                    {
+                        obstacle.StopCoroutine(obstacle.movimentoCoroutine);
+                    }
+
+                    obstacle.movimentoCoroutine = obstacle.StartCoroutine(obstacle.MuoviChildConOscillazione());
+                }
+            }
+        }
     }
 
     private void OnTriggerStay2D(Collider2D hit)
@@ -420,6 +436,23 @@ public class PlayerController : MonoBehaviour, IPausable
                 playerStats.IncreaseStat("SomeStat", 10); // Modifica il nome della statistica e il valore da incrementare
             }*/
         }
+        if (hit.gameObject.CompareTag("Eddy"))
+        {
+            Debug.Log("eddy");
+            ObstacleEddy obstacle = hit.GetComponent<ObstacleEddy>();
+            if (obstacle != null)
+            {
+                Debug.Log("1");
+                if (rb != null)
+                {
+                    Debug.Log("2");
+                    // Applica la forza verso il basso
+                    rb.AddForce(Vector2.up * obstacle.forzaSpinta, ForceMode2D.Impulse);
+
+                }
+            }
+        }
+        
     }
 
     private void OnTriggerExit2D(Collider2D hit)
@@ -429,6 +462,19 @@ public class PlayerController : MonoBehaviour, IPausable
             // Reset
             //rb.velocity = Vector2.zero; 
             initialHeight = 0f;
+        }
+        if (hit.gameObject.CompareTag("Chele"))
+        {
+            ObstacleChele obstacle = hit.GetComponent<ObstacleChele>();
+            if (obstacle != null)
+            {
+                if (obstacle != null)
+                {
+                    // Ferma il movimento e ripristina la posizione iniziale
+                    if (obstacle.movimentoCoroutine != null) obstacle.StopCoroutine(obstacle.movimentoCoroutine);
+                    obstacle.childObject.localPosition = obstacle.posizioneIniziale;
+                }
+            }
         }
     }
      
