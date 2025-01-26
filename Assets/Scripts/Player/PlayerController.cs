@@ -70,7 +70,7 @@ public class PlayerController : MonoBehaviour, IPausable
     private void Update()
     {
         oxygen = oxygen - oxygenOT * Time.deltaTime;
-        oxygenSlider.value = oxygen / maxOxygen;
+        oxygenSlider.value = 1 - oxygen / maxOxygen;
 
         if(oxygen <= 0){
             bubbleState = -1;
