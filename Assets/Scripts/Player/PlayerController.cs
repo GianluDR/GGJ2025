@@ -63,6 +63,7 @@ public class PlayerController : MonoBehaviour, IPausable
         spriteRenderer = GetComponent<SpriteRenderer>();
         FindObjectOfType<AudioManager>().Play("Background_Music#2");
         BubbleState();
+        FindObjectOfType<AudioManager>().StopPlaying("Background_Music#1");
     }
 
     
@@ -388,6 +389,24 @@ public class PlayerController : MonoBehaviour, IPausable
         }
     }
 
+    private IEnumerator ChangeColorTemporarily()
+    {
+        if (spriteRenderer == null)
+        {
+            Debug.LogError("SpriteRenderer non assegnato!");
+            yield break;
+        }
+
+        // Cambia il colore a rosso
+        spriteRenderer.color = Color.red;
+
+        // Aspetta per mezzo secondo
+        yield return new WaitForSeconds(0.5f);
+
+        // Cambia il colore a bianco
+        spriteRenderer.color = Color.white;
+    }
+
     public float initialHeight = 0;
     public float forceMultiplier = 50f; // Moltiplicatore per aumentare la forza
     public float exponentialGrowth = 10f; // Crescita esponenziale della forza
@@ -404,8 +423,7 @@ public class PlayerController : MonoBehaviour, IPausable
             if(bubbleState>-1&&bubbleState<3)
                BubbleDown();
             else if(bubbleState==-1);//MORTE PERCHè COLPITO DA VULNERABILE
-
-            
+            StartCoroutine(ChangeColorTemporarily());
         }
         if (hit.gameObject.CompareTag("Chele"))
         {
@@ -422,6 +440,10 @@ public class PlayerController : MonoBehaviour, IPausable
                     obstacle.movimentoCoroutine = obstacle.StartCoroutine(obstacle.MuoviChildConOscillazione());
                 }
             }
+        }
+        if (hit.gameObject.CompareTag("END"))
+        {
+            SceneManager.LoadScene("Menu");
         }
     }
 

@@ -26,7 +26,7 @@ public class MenuManager : MonoBehaviour, IPointerEnterHandler
     }
 
     public void StartButton(){
-        SceneManager.LoadScene("Game");
+        SceneManager.LoadScene("MainLevel");
     }
 
     public void OnPointerEnter(PointerEventData pointerEventData)
