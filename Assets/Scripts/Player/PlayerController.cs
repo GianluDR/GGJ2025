@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -312,10 +313,10 @@ public class PlayerController : MonoBehaviour, IPausable
     }
 
         [Header("Walking Speed State")]
-    [SerializeField]private float walkingSpeedVUL;
-    [SerializeField]private float walkingSpeedSCB;
-    [SerializeField]private float walkingSpeedMINB;
-    [SerializeField]private float walkingSpeedMAXB;
+    [SerializeField]private float walkingSpeedVUL = 5f;
+    [SerializeField]private float walkingSpeedSCB = 5f;
+    [SerializeField]private float walkingSpeedMINB = 5f;
+    [SerializeField]private float walkingSpeedMAXB = 5f;
 
     [Header("Swimming Speed State")]
     [SerializeField]private float swimmingForceVUL;
@@ -481,6 +482,10 @@ public class PlayerController : MonoBehaviour, IPausable
                 }
             }
         }
+        if (hit.gameObject.CompareTag("END"))
+        {
+            SceneManager.LoadScene("Menu");
+        }
         
     }
 
@@ -575,7 +580,7 @@ public class PlayerController : MonoBehaviour, IPausable
         
         if (collision.gameObject.CompareTag("Ground"))
         {
-            lastGroundedTime = Time.time;
+            //lastGroundedTime = Time.time;
             if(inAir)
             { 
                 inAir = false;
@@ -588,8 +593,9 @@ public class PlayerController : MonoBehaviour, IPausable
     {
         if (collision.gameObject.CompareTag("Ground"))
         {
+            inAir = true;
             // Inizia a considerare il player in aria, ma verifica nel buffer
-            StartCoroutine(CheckInAir());
+            //StartCoroutine(CheckInAir());
         }
     }
 
