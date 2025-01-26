@@ -114,6 +114,7 @@ public class PlayerController : MonoBehaviour, IPausable
                         lastImpulseTime = 0f;
                         animator.SetBool("InAir", inAir);
                         animator.SetBool("IsMoving", true);
+                        FindObjectOfType<AudioManager>().waitPlaying("Walk");
                         Swim();
                     }
                 }
@@ -134,6 +135,7 @@ public class PlayerController : MonoBehaviour, IPausable
                         success = TryMove(new Vector2(0, direction.y));
                     }
                     animator.SetBool("IsMoving", success);
+                    FindObjectOfType<AudioManager>().waitPlaying("Walk");
                 }
                 else {
                     animator.SetBool("IsMoving", false);
@@ -277,6 +279,7 @@ public class PlayerController : MonoBehaviour, IPausable
         // Imposta la velocità finale (mantieni la velocità verticale invariata)
         //rb.velocity = new Vector2(0f, 0f);
         ////rb.AddForce(new Vector2(, 0), ForceMode2D.Impulse);
+        FindObjectOfType<AudioManager>().waitPlaying("Jump_Swim");
         if(movementInput.y > 0){
             rb.AddForce(new Vector2(movementInput.x * swimmingForce, movementInput.y * swimmingForce * 0.35f), ForceMode2D.Impulse);
         }else{
@@ -376,6 +379,7 @@ public class PlayerController : MonoBehaviour, IPausable
         {
             bubbleState = -1;
             BubbleState();
+            FindObjectOfType<AudioManager>().Play("Hit");
         }
     }
 
@@ -448,6 +452,7 @@ public class PlayerController : MonoBehaviour, IPausable
                     changeOxygen(oxygenToSCBFromZero);
                 }
                 bubbleState++;
+                FindObjectOfType<AudioManager>().Play("Bubble_+");
                 BubbleState();
             }
         }
@@ -464,6 +469,8 @@ public class PlayerController : MonoBehaviour, IPausable
                     //REFUND OSSIGENO DA BOLLA GRANDE A PICCOLA
                     changeOxygen(oxygenToSCBFromMax);
                 }
+                bubbleState--;
+                FindObjectOfType<AudioManager>().Play("Bubble_-");
                 BubbleState();
             }
         }

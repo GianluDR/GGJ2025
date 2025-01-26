@@ -5652,60 +5652,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1200116431}
   m_CullTransparentMesh: 1
---- !u!1 &1217771792
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1217771794}
-  - component: {fileID: 1217771793}
-  m_Layer: 0
-  m_Name: AudioManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1217771793
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1217771792}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d13149571d15a9340bdf2d2daa4f2c4e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  sounds:
-  - name: OnHoverMenu
-    clip: {fileID: 8300000, guid: 49a624d013f2c1543adcaa0d8d73a6df, type: 3}
-    volume: 1
-    volumeVariance: 0
-    pitch: 1
-    pitchVariance: 0.463
-    loop: 0
-    mixerGroup: {fileID: -6589904579366246563, guid: e00214ac03fc6dd4e8debc27bcac3cd4, type: 2}
-    source: {fileID: 0}
---- !u!4 &1217771794
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1217771792}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 893.5341, y: 492.8737, z: 5.326388}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1233793361
 GameObject:
   m_ObjectHideFlags: 0
@@ -9456,6 +9402,123 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 128ce8fa30ced7d4a884005b3266d6c3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &2024557929
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2024557931}
+  - component: {fileID: 2024557930}
+  m_Layer: 0
+  m_Name: AudioManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &2024557930
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2024557929}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d13149571d15a9340bdf2d2daa4f2c4e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sounds:
+  - name: Bubble_+
+    clip: {fileID: 8300000, guid: 5782c7f3a03e9f347ba73f1b0f799a67, type: 3}
+    volume: 1
+    volumeVariance: 0.064
+    pitch: 1
+    pitchVariance: 0
+    loop: 0
+    mixerGroup: {fileID: -6589904579366246563, guid: e00214ac03fc6dd4e8debc27bcac3cd4, type: 2}
+    source: {fileID: 0}
+  - name: Bubble_-
+    clip: {fileID: 8300000, guid: 88c7b5ebd60352a42b9d3362f180337f, type: 3}
+    volume: 1
+    volumeVariance: 0.073
+    pitch: 1
+    pitchVariance: 0
+    loop: 0
+    mixerGroup: {fileID: -6589904579366246563, guid: e00214ac03fc6dd4e8debc27bcac3cd4, type: 2}
+    source: {fileID: 0}
+  - name: BubblePop
+    clip: {fileID: 8300000, guid: 895e4948eea82034bad1061e4b4fb98e, type: 3}
+    volume: 1
+    volumeVariance: 0
+    pitch: 1
+    pitchVariance: 0
+    loop: 0
+    mixerGroup: {fileID: -6589904579366246563, guid: e00214ac03fc6dd4e8debc27bcac3cd4, type: 2}
+    source: {fileID: 0}
+  - name: Death
+    clip: {fileID: 8300000, guid: b11c553500e1818499148cad1c286294, type: 3}
+    volume: 1
+    volumeVariance: 0
+    pitch: 1
+    pitchVariance: 0
+    loop: 0
+    mixerGroup: {fileID: -6589904579366246563, guid: e00214ac03fc6dd4e8debc27bcac3cd4, type: 2}
+    source: {fileID: 0}
+  - name: Hit
+    clip: {fileID: 8300000, guid: 22b9397731d499b47af4659598b4276f, type: 3}
+    volume: 1
+    volumeVariance: 0
+    pitch: 1
+    pitchVariance: 0
+    loop: 0
+    mixerGroup: {fileID: -6589904579366246563, guid: e00214ac03fc6dd4e8debc27bcac3cd4, type: 2}
+    source: {fileID: 0}
+  - name: Jump_Swim
+    clip: {fileID: 8300000, guid: eda15c32554bc674ebe7276f61c1e2be, type: 3}
+    volume: 0.061
+    volumeVariance: 0
+    pitch: 0.685
+    pitchVariance: 0.108
+    loop: 0
+    mixerGroup: {fileID: -6589904579366246563, guid: e00214ac03fc6dd4e8debc27bcac3cd4, type: 2}
+    source: {fileID: 0}
+  - name: OxyRefill
+    clip: {fileID: 8300000, guid: d217c70954f3be141b577173542d10c1, type: 3}
+    volume: 1
+    volumeVariance: 0
+    pitch: 1
+    pitchVariance: 0
+    loop: 0
+    mixerGroup: {fileID: -6589904579366246563, guid: e00214ac03fc6dd4e8debc27bcac3cd4, type: 2}
+    source: {fileID: 0}
+  - name: Walk
+    clip: {fileID: 8300000, guid: 32fbe63b33fc4d342be544c05db86c18, type: 3}
+    volume: 0.14
+    volumeVariance: 0
+    pitch: 1
+    pitchVariance: 0.275
+    loop: 0
+    mixerGroup: {fileID: -6589904579366246563, guid: e00214ac03fc6dd4e8debc27bcac3cd4, type: 2}
+    source: {fileID: 0}
+--- !u!4 &2024557931
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2024557929}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 893.5341, y: 492.8737, z: 5.326388}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2057381791
 GameObject:
   m_ObjectHideFlags: 0
@@ -9922,9 +9985,9 @@ CanvasRenderer:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
-  - {fileID: 1217771794}
   - {fileID: 44294314}
   - {fileID: 288158920}
   - {fileID: 2118078691}
   - {fileID: 750615866}
   - {fileID: 1321436645}
+  - {fileID: 2024557931}
