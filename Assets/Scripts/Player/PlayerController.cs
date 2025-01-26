@@ -60,7 +60,7 @@ public class PlayerController : MonoBehaviour, IPausable
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         spriteRenderer = GetComponent<SpriteRenderer>();
-
+        FindObjectOfType<AudioManager>().Play("Background_Music#2");
         BubbleState();
     }
 
@@ -137,7 +137,6 @@ public class PlayerController : MonoBehaviour, IPausable
                         lastImpulseTime = 0f;
                         animator.SetBool("InAir", inAir);
                         animator.SetBool("IsMoving", true);
-                        FindObjectOfType<AudioManager>().waitPlaying("Walk");
                         Swim();
                     }
                 }
@@ -400,9 +399,11 @@ public class PlayerController : MonoBehaviour, IPausable
         }
         if (hit.gameObject.CompareTag("Obstacle"))
         {
-            bubbleState = -1;
-            BubbleState();
-            FindObjectOfType<AudioManager>().Play("Hit");
+            if(bubbleState>-1&&bubbleState<3)
+               BubbleDown();
+            else if(bubbleState==-1);//MORTE PERCHè COLPITO DA VULNERABILE
+
+            
         }
         if (hit.gameObject.CompareTag("Chele"))
         {
@@ -584,6 +585,14 @@ public class PlayerController : MonoBehaviour, IPausable
             inAir = true;
             animator.SetBool("InAir", inAir);
         }  
+    }
+
+    public void BubbleDown()
+    {
+        FindObjectOfType<AudioManager>().Play("BubblePop");
+        bubbleState = -1;
+        BubbleState();
+        FindObjectOfType<AudioManager>().Play("Hit");
     }
 
 }
