@@ -438,16 +438,20 @@ public class PlayerController : MonoBehaviour, IPausable
         }
         if (hit.gameObject.CompareTag("Eddy"))
         {
-            Debug.Log("eddy");
             ObstacleEddy obstacle = hit.GetComponent<ObstacleEddy>();
             if (obstacle != null)
             {
-                Debug.Log("1");
                 if (rb != null)
                 {
-                    Debug.Log("2");
+                    Debug.Log(obstacle.transform.localRotation.eulerAngles.z);
                     // Applica la forza verso il basso
-                    rb.AddForce(Vector2.up * obstacle.forzaSpinta, ForceMode2D.Impulse);
+                    if(obstacle.transform.localRotation.eulerAngles.z == 90)
+                        rb.AddForce(Vector2.up * obstacle.forzaSpinta, ForceMode2D.Impulse);
+                    else if(obstacle.transform.localRotation.eulerAngles.z == 180)
+                        rb.AddForce(Vector2.left * obstacle.forzaSpinta, ForceMode2D.Impulse);
+                    else if(obstacle.transform.localRotation.eulerAngles.z == 270)
+                        rb.AddForce(Vector2.down * obstacle.forzaSpinta, ForceMode2D.Impulse);
+                    
 
                 }
             }

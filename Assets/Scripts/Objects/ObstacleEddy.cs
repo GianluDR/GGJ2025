@@ -28,7 +28,7 @@ public class ObstacleEddy : MonoBehaviour
             if (rb != null)
             {
                 // Applica una forza continua verso il basso
-                rb.AddForce(Vector3.down * forzaSpinta * Time.deltaTime, ForceMode.Force);
+                //rb.AddForce(Vector3.down * forzaSpinta * Time.deltaTime, ForceMode.Force);
             }
         }
     }
