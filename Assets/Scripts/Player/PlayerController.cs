@@ -16,6 +16,7 @@ public class PlayerController : MonoBehaviour, IPausable
     [SerializeField]private float moveSpeed = 5f; //NON SERIALIZE
     [SerializeField]public float swimmingForce = 2f; // Forza di accelerazione per il nuoto
     [SerializeField]public float maxSwimmingSpeed = 5f; // Velocità massima mentre nuota
+    [SerializeField]public float jumpForceX = 3f;
     [SerializeField]public float jumpForce = 3f;
     [SerializeField]private bool inAir = false; //NON SERIALIZE
     [Header("Survival Attribute")]
@@ -539,8 +540,8 @@ public class PlayerController : MonoBehaviour, IPausable
     {
         if (!inAir)
         {
-            rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
-            //rb.AddForce(new Vector2(movementInput.x,0) * jumpForce, ForceMode2D.Impulse);
+            //rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
+            rb.AddForce(new Vector2(movementInput.x * jumpForceX, jumpForce), ForceMode2D.Impulse);
             //rb.velocity = new Vector2(rb.velocity.x, 20);
         }        
     }
