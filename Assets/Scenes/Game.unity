@@ -4540,7 +4540,7 @@ MonoBehaviour:
   forceMultiplier: 50
   exponentialGrowth: 2.5
   oxygenToSCBFromZero: 20
-  oxygenToSCBFromMax: 10
+  oxygenToSCBFromMax: -15
   oxygenToMAXB: 25
 --- !u!114 &640616283
 MonoBehaviour:

@@ -22,6 +22,7 @@ public class PlayerController : MonoBehaviour, IPausable
     [SerializeField]private float maxOxygen;
     [SerializeField]private float oxygen;
     [SerializeField]private float oxygenOT = 2f;
+    [SerializeField]private float oxygenRechargeOT = 5f;
     [SerializeField]public Slider oxygenSlider;
     //public Slider hungerSlider;
     [Header("Bubble Attribute")]
@@ -61,8 +62,22 @@ public class PlayerController : MonoBehaviour, IPausable
         oxygen = oxygen - oxygenOT * Time.deltaTime;
         oxygenSlider.value = oxygen / maxOxygen;
 
-        if(oxygen == 0){
-            
+        if(oxygen <= 0){
+            bubbleState = -1;
+            BubbleState();
+        }
+
+
+        AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0); // 0 is the default layer index
+        if (stateInfo.IsName("player_idle"))
+        {
+            if(bubbleState == 0)
+                bubbleRenderer.enabled = false;
+        }
+        else
+        {
+            if(bubbleState == 0)
+                bubbleRenderer.enabled = true;
         }
     }
   
@@ -282,6 +297,9 @@ public class PlayerController : MonoBehaviour, IPausable
         if (bubbleState==-1)//VULNERABILE
         {
             bubbleRenderer.sprite = spriteVUL;
+            bubbleRenderer.enabled = false;
+
+            animator.SetBool("NoOxygen", true);
             bubbleForce=(-4f);
             swimmingForce = swimmingForceVUL;
             //VELOCITA LATERALE AUMENTATA
@@ -292,10 +310,12 @@ public class PlayerController : MonoBehaviour, IPausable
         {
             bubblePos.localPosition = new Vector3(-0.22f,0.19f,0f);
             //bubblePos.localScale = new Vector3(1f,1f,1f);
+            
             bubbleRenderer.sprite = spriteSCB;
             swimmingForce = swimmingForceSCB;
 
             bubbleForce=(-3f);
+            animator.SetBool("NoOxygen", false);
             bubbleAnimator.SetBool("isOnBack", true);
             bubbleAnimator.SetBool("isSmall", false);
             bubbleAnimator.SetBool("isBig", false);
@@ -308,10 +328,12 @@ public class PlayerController : MonoBehaviour, IPausable
         {
             bubblePos.localPosition = new Vector3(0f,0f,0f);
             //bubblePos.localScale = new Vector3(1f,1f,1f);
+            bubbleRenderer.enabled = true;
             bubbleRenderer.sprite = spriteMINB;
             swimmingForce = swimmingForceMINB;
 
             bubbleForce=(-2f);
+            animator.SetBool("NoOxygen", false);
             bubbleAnimator.SetBool("isOnBack", false);
             bubbleAnimator.SetBool("isSmall", true);
             bubbleAnimator.SetBool("isBig", false);
@@ -323,10 +345,12 @@ public class PlayerController : MonoBehaviour, IPausable
         {
             bubblePos.localPosition = new Vector3(0f,0f,0f);
             //bubblePos.localScale = new Vector3(1.5f,1.5f,1.5f);
+            bubbleRenderer.enabled = true;
             bubbleRenderer.sprite = spriteMAXB;
             swimmingForce = swimmingForceMAXB;
 
             bubbleForce=(5f);
+            animator.SetBool("NoOxygen", false);
             bubbleAnimator.SetBool("isOnBack", false);
             bubbleAnimator.SetBool("isSmall", false);
             bubbleAnimator.SetBool("isBig", true);
@@ -363,6 +387,13 @@ public class PlayerController : MonoBehaviour, IPausable
             // Calcola la differenza di altezza rispetto all'altezza iniziale
             float currentHeight = transform.position.y;
             float heightDifference = currentHeight - initialHeight;
+
+            oxygen = oxygen + oxygenRechargeOT * Time.deltaTime;
+            oxygenSlider.value = oxygen / maxOxygen;
+
+            if(oxygen > 100){
+                oxygen = 100;
+            }
 
             /*if (heightDifference > maxHeight)
             {
@@ -425,14 +456,14 @@ public class PlayerController : MonoBehaviour, IPausable
     void OnBubbleDOWN(InputAction.CallbackContext context)
     {
         if (context.started){
-            if (bubbleState > -1)
+            if (bubbleState > 0)
             {
+                bubbleState--;
                 if(bubbleState==1)
                 {
                     //REFUND OSSIGENO DA BOLLA GRANDE A PICCOLA
                     changeOxygen(oxygenToSCBFromMax);
                 }
-                bubbleState--;
                 BubbleState();
             }
         }
