@@ -311,6 +311,11 @@ public class PlayerController : MonoBehaviour, IPausable
         lastImpulseTime = Time.time;
     }
 
+        [Header("Walking Speed State")]
+    [SerializeField]private float walkingSpeedVUL;
+    [SerializeField]private float walkingSpeedSCB;
+    [SerializeField]private float walkingSpeedMINB;
+    [SerializeField]private float walkingSpeedMAXB;
 
     [Header("Swimming Speed State")]
     [SerializeField]private float swimmingForceVUL;
@@ -327,8 +332,8 @@ public class PlayerController : MonoBehaviour, IPausable
             animator.SetBool("NoOxygen", true);
             bubbleForce=(-4f);
             swimmingForce = swimmingForceVUL;
-            //VELOCITA LATERALE AUMENTATA
-            
+            moveSpeed = walkingSpeedVUL;
+            oxygenOT=2f;
         }
 
         if (bubbleState==0)//BOLLA SCHIENA
@@ -338,16 +343,14 @@ public class PlayerController : MonoBehaviour, IPausable
             
             bubbleRenderer.sprite = spriteSCB;
             swimmingForce = swimmingForceSCB;
-
+            moveSpeed = walkingSpeedSCB;
             bubbleForce=(-3f);
             animator.SetBool("NoOxygen", false);
             bubbleAnimator.SetBool("isOnBack", true);
             bubbleAnimator.SetBool("isSmall", false);
             bubbleAnimator.SetBool("isBig", false);
-
-            //NUOTO RALLENTATO
             //VELOCITA LATERALE A TERRA AUMENTATA
-            //OSSIGENO CONSUMATO Y
+            oxygenOT=1.5f;
         }
         else if(bubbleState==1)//BOLLA PICCOLA
         {
@@ -356,15 +359,14 @@ public class PlayerController : MonoBehaviour, IPausable
             bubbleRenderer.enabled = true;
             bubbleRenderer.sprite = spriteMINB;
             swimmingForce = swimmingForceMINB;
-
+            moveSpeed = walkingSpeedMINB;
             bubbleForce=(-2f);
-            animator.SetBool("NoOxygen", false);
+            animator.SetBool("NoOxygen", true);
             bubbleAnimator.SetBool("isOnBack", false);
             bubbleAnimator.SetBool("isSmall", true);
             bubbleAnimator.SetBool("isBig", false);
-            //NUOTO VELOCIZZATO
             //VELOCITA LATERALE A TERRA DIMINUITO
-            //OSSIGENO CONSUMATO Z
+            oxygenOT=1f;
         }
         else if(bubbleState==2)//BOLLA GRANDE
         {
@@ -373,15 +375,14 @@ public class PlayerController : MonoBehaviour, IPausable
             bubbleRenderer.enabled = true;
             bubbleRenderer.sprite = spriteMAXB;
             swimmingForce = swimmingForceMAXB;
-
+            moveSpeed = walkingSpeedMAXB;
             bubbleForce=(5f);
-            animator.SetBool("NoOxygen", false);
+            animator.SetBool("NoOxygen", true);
             bubbleAnimator.SetBool("isOnBack", false);
             bubbleAnimator.SetBool("isSmall", false);
             bubbleAnimator.SetBool("isBig", true);
-            //NUOTO VELOCIZZATO
             //VELOCITA LATERALE A TERRA DIMINUITO
-            //OSSIGENO CONSUMATO Z
+            oxygenOT=1f;
             
         }
     }
@@ -543,7 +544,6 @@ public class PlayerController : MonoBehaviour, IPausable
                     //REFUND OSSIGENO DA BOLLA GRANDE A PICCOLA
                     changeOxygen(oxygenToSCBFromMax);
                 }
-                bubbleState--;
                 FindObjectOfType<AudioManager>().Play("Bubble_-");
                 BubbleState();
             }
@@ -568,13 +568,19 @@ public class PlayerController : MonoBehaviour, IPausable
             //rb.velocity = new Vector2(rb.velocity.x, 20);
         }        
     }
-
+    private float airTimeBuffer = 0.08f; // Tempo in secondi prima di considerare "in aria"
+    private float lastGroundedTime;
     void OnCollisionEnter2D(Collision2D collision)
     {
+        
         if (collision.gameObject.CompareTag("Ground"))
         {
-            inAir = false;
-            animator.SetBool("InAir", inAir);
+            lastGroundedTime = Time.time;
+            if(inAir)
+            { 
+                inAir = false;
+                animator.SetBool("InAir", inAir);
+            }          
         }
     }
 
@@ -582,9 +588,21 @@ public class PlayerController : MonoBehaviour, IPausable
     {
         if (collision.gameObject.CompareTag("Ground"))
         {
+            // Inizia a considerare il player in aria, ma verifica nel buffer
+            StartCoroutine(CheckInAir());
+        }
+    }
+
+    private IEnumerator CheckInAir()
+    {
+        yield return new WaitForSeconds(airTimeBuffer);
+
+        // Se non è tornato a contatto con il terreno dopo il buffer
+        if (Time.time - lastGroundedTime >= airTimeBuffer)
+        {
             inAir = true;
             animator.SetBool("InAir", inAir);
-        }  
+        }
     }
 
     public void BubbleDown()
