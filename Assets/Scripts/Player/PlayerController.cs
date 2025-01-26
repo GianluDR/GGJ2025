@@ -31,6 +31,10 @@ public class PlayerController : MonoBehaviour, IPausable
     [SerializeField]public float bubbleForce = 0f;
     public float lastImpulseTime = 0f; // Tempo dell'ultimo impulso
     public float impulseInterval = 0.5f; // Intervallo tra ogni scatto (in secondi)
+    [Header("Death")]
+    [SerializeField] private float deathTime = 3f; // Tempo dopo il quale il giocatore muore
+    [SerializeField] public Vector3 StartPos;
+    private float deathTimer = 0f; // Timer per il conteggio del tempo
     [Header("Bubble")]
     [SerializeField]public SpriteRenderer bubbleRenderer; // Sprite vulnerabile
     [SerializeField]private Animator bubbleAnimator;
@@ -42,6 +46,8 @@ public class PlayerController : MonoBehaviour, IPausable
     private Rigidbody2D rb;
     [SerializeField] private InputAction BubbleUP;
     [SerializeField] private InputAction BubbleDOWN;
+
+    
     Animator animator;
     
     private List<RaycastHit2D> castCollisions = new List<RaycastHit2D>();
@@ -58,6 +64,8 @@ public class PlayerController : MonoBehaviour, IPausable
         BubbleState();
     }
 
+    
+
     private void Update()
     {
         oxygen = oxygen - oxygenOT * Time.deltaTime;
@@ -66,6 +74,20 @@ public class PlayerController : MonoBehaviour, IPausable
         if(oxygen <= 0){
             bubbleState = -1;
             BubbleState();
+
+            // Incrementa il timer per la morte
+            deathTimer += Time.deltaTime;
+
+            if (deathTimer >= deathTime)
+            {
+                // Dopo X secondi di ossigeno a 0, il giocatore muore
+                oxygen = maxOxygen;
+                transform.position = StartPos;
+            }
+        }
+        else
+        {
+            deathTimer = 0f;
         }
 
 
