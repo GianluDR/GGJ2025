@@ -2343,7 +2343,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ba52049e7a5210d4aade9e502a0c07df, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  parallaxFactor: -4
+  parallaxFactor: -0.9
 --- !u!114 &287655732
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -17446,6 +17446,7 @@ MonoBehaviour:
   moveSpeed: 8
   swimmingForce: 2
   maxSwimmingSpeed: 15
+  jumpForceX: 3
   jumpForce: 3
   inAir: 1
   maxOxygen: 100
@@ -17457,6 +17458,8 @@ MonoBehaviour:
   bubbleForce: 5
   lastImpulseTime: 0
   impulseInterval: 0.5
+  deathTime: 3
+  StartPos: {x: 0, y: 0, z: 0}
   bubbleRenderer: {fileID: 702617192}
   bubbleAnimator: {fileID: 702617191}
   bubblePos: {fileID: 702617190}
@@ -17498,6 +17501,10 @@ MonoBehaviour:
       m_Action: Bubble DOWN
       m_Flags: 0
     m_Flags: 0
+  walkingSpeedVUL: 5
+  walkingSpeedSCB: 5
+  walkingSpeedMINB: 5
+  walkingSpeedMAXB: 5
   swimmingForceVUL: 0.5
   swimmingForceSCB: 3
   swimmingForceMINB: 2

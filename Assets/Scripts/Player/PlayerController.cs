@@ -70,39 +70,42 @@ public class PlayerController : MonoBehaviour, IPausable
 
     private void Update()
     {
-        oxygen = oxygen - oxygenOT * Time.deltaTime;
-        oxygenSlider.value = 1 - oxygen / maxOxygen;
+        if (!inPause)
+        {
+            oxygen = oxygen - oxygenOT * Time.deltaTime;
+            oxygenSlider.value = 1 - oxygen / maxOxygen;
 
-        if(oxygen <= 0){
-            bubbleState = -1;
-            BubbleState();
+            if(oxygen <= 0){
+                bubbleState = -1;
+                BubbleState();
 
-            // Incrementa il timer per la morte
-            deathTimer += Time.deltaTime;
+                // Incrementa il timer per la morte
+                deathTimer += Time.deltaTime;
 
-            if (deathTimer >= deathTime)
-            {
-                // Dopo X secondi di ossigeno a 0, il giocatore muore
-                oxygen = maxOxygen;
-                transform.position = StartPos;
+                if (deathTimer >= deathTime)
+                {
+                    // Dopo X secondi di ossigeno a 0, il giocatore muore
+                    oxygen = maxOxygen;
+                    transform.position = StartPos;
+                }
             }
-        }
-        else
-        {
-            deathTimer = 0f;
-        }
+            else
+            {
+                deathTimer = 0f;
+            }
 
 
-        AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0); // 0 is the default layer index
-        if (stateInfo.IsName("player_idle"))
-        {
-            if(bubbleState == 0)
-                bubbleRenderer.enabled = false;
-        }
-        else
-        {
-            if(bubbleState == 0)
-                bubbleRenderer.enabled = true;
+            AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0); // 0 is the default layer index
+            if (stateInfo.IsName("player_idle"))
+            {
+                if(bubbleState == 0)
+                    bubbleRenderer.enabled = false;
+            }
+            else
+            {
+                if(bubbleState == 0)
+                    bubbleRenderer.enabled = true;
+            }
         }
     }
   
@@ -443,7 +446,7 @@ public class PlayerController : MonoBehaviour, IPausable
         }
         if (hit.gameObject.CompareTag("END"))
         {
-            SceneManager.LoadScene("Menu");
+            SceneManager.LoadScene("Credits");
         }
     }
 

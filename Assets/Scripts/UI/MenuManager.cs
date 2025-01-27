@@ -25,6 +25,10 @@ public class MenuManager : MonoBehaviour, IPointerEnterHandler
         SceneManager.LoadScene("Menu");
     }
 
+    public void CreditsButton(){
+        SceneManager.LoadScene("Credits");
+    }
+
     public void StartButton(){
         SceneManager.LoadScene("MainLevel");
     }
